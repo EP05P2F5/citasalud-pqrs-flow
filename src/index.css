@@ -2,41 +2,66 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* CITASalud PQRS - Sistema de diseño médico profesional
+Colores HSL optimizados para accesibilidad y confianza médica
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Fondos principales */
+    --background: 210 40% 98%;
+    --foreground: 215 25% 27%;
 
+    /* Tarjetas y contenedores */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 215 25% 27%;
 
+    /* Popovers y modales */
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 215 25% 27%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Colores primarios médicos */
+    --primary: 210 98% 48%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 210 98% 42%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Colores secundarios profesionales */
+    --secondary: 146 60% 50%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-hover: 146 60% 44%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Colores neutros y de apoyo */
+    --muted: 210 25% 95%;
+    --muted-foreground: 215 15% 58%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 195 100% 95%;
+    --accent-foreground: 215 25% 27%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Estados de error y éxito */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 146 70% 45%;
+    --success-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Bordes y elementos interactivos */
+    --border: 210 25% 88%;
+    --input: 210 25% 88%;
+    --ring: 210 98% 48%;
 
-    --radius: 0.5rem;
+    /* Gradientes médicos */
+    --gradient-primary: linear-gradient(135deg, hsl(210 98% 48%), hsl(195 100% 50%));
+    --gradient-secondary: linear-gradient(135deg, hsl(146 60% 50%), hsl(170 60% 50%));
+    --gradient-surface: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 25% 98%));
+
+    /* Sombras profesionales */
+    --shadow-sm: 0 2px 4px hsl(215 25% 27% / 0.06);
+    --shadow-md: 0 4px 12px hsl(215 25% 27% / 0.08);
+    --shadow-lg: 0 8px 24px hsl(215 25% 27% / 0.10);
+    --shadow-primary: 0 4px 20px hsl(210 98% 48% / 0.20);
+
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -56,33 +81,53 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    /* Fondos oscuros médicos */
+    --background: 215 28% 17%;
     --foreground: 210 40% 98%;
 
-    --card: 222.2 84% 4.9%;
+    --card: 215 25% 20%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 215 25% 20%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    /* Colores primarios en modo oscuro */
+    --primary: 210 100% 56%;
+    --primary-foreground: 215 28% 17%;
+    --primary-hover: 210 100% 50%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 146 50% 55%;
+    --secondary-foreground: 215 28% 17%;
+    --secondary-hover: 146 50% 49%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 215 25% 25%;
+    --muted-foreground: 215 15% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
+    --accent: 195 80% 25%;
     --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 62.8% 30.6%;
+    /* Estados en modo oscuro */
+    --destructive: 0 75% 55%;
     --destructive-foreground: 210 40% 98%;
+    --success: 146 60% 50%;
+    --success-foreground: 215 28% 17%;
+    --warning: 38 85% 55%;
+    --warning-foreground: 215 28% 17%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+    --border: 215 25% 30%;
+    --input: 215 25% 30%;
+    --ring: 210 100% 56%;
+
+    /* Gradientes en modo oscuro */
+    --gradient-primary: linear-gradient(135deg, hsl(210 100% 56%), hsl(195 90% 55%));
+    --gradient-secondary: linear-gradient(135deg, hsl(146 50% 55%), hsl(170 50% 55%));
+    --gradient-surface: linear-gradient(180deg, hsl(215 25% 20%), hsl(215 28% 17%));
+
+    /* Sombras en modo oscuro */
+    --shadow-sm: 0 2px 4px hsl(0 0% 0% / 0.20);
+    --shadow-md: 0 4px 12px hsl(0 0% 0% / 0.25);
+    --shadow-lg: 0 8px 24px hsl(0 0% 0% / 0.30);
+    --shadow-primary: 0 4px 20px hsl(210 100% 56% / 0.30);
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -100,6 +145,33 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Mejoras de accesibilidad */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Focus indicators accesibles */
+  *:focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
+  /* Transiciones suaves */
+  * {
+    transition-property: color, background-color, border-color, box-shadow, transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
   }
 }
