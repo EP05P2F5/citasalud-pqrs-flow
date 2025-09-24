@@ -5,7 +5,6 @@ import {
   Filter, 
   Eye, 
   Edit, 
-  Trash2, 
   FileText, 
   Calendar,
   Clock,
@@ -176,7 +175,7 @@ const ManagePQRS: React.FC = () => {
   };
 
   const handleEdit = (pqrs: any) => {
-    if (pqrs.canEdit) {
+    if (pqrs.canEdit && (pqrs.status === "Radicada" || pqrs.status === "En proceso")) {
       navigate(`/pqrs/edit/${pqrs.id}`, { state: { pqrs } });
     }
   };
@@ -357,17 +356,12 @@ const ManagePQRS: React.FC = () => {
                               <Eye className="mr-2 h-4 w-4" />
                               Ver detalles
                             </DropdownMenuItem>
-                            {pqrs.canEdit && (
+                            {pqrs.canEdit && (pqrs.status === "Radicada" || pqrs.status === "En proceso") && (
                               <DropdownMenuItem onClick={() => handleEdit(pqrs)}>
                                 <Edit className="mr-2 h-4 w-4" />
                                 Editar
                               </DropdownMenuItem>
                             )}
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-destructive" disabled>
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              Eliminar
-                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
@@ -447,7 +441,7 @@ const ManagePQRS: React.FC = () => {
                     <p>Actualizado: {formatDate(selectedPQRS.updatedAt)}</p>
                   </div>
                   
-                  {selectedPQRS.canEdit && (
+                  {selectedPQRS.canEdit && (selectedPQRS.status === "Radicada" || selectedPQRS.status === "En proceso") && (
                     <MedicalButton
                       variant="medical"
                       size="sm"

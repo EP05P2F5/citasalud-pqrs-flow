@@ -5,7 +5,6 @@ import {
   Home, 
   FileText, 
   List, 
-  Bell, 
   User, 
   Settings, 
   MessageSquare,
@@ -51,12 +50,6 @@ export const MedicalSidebar: React.FC<MedicalSidebarProps> = ({
       href: "/pqrs/manage",
       icon: List,
       label: "Mis Solicitudes",
-      isActive: true,
-    },
-    {
-      href: "/notifications",
-      icon: Bell,
-      label: "Notificaciones",
       isActive: true,
     },
     {

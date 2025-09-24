@@ -8,6 +8,7 @@ import Dashboard from "./pages/Dashboard";
 import CreatePQRS from "./pages/CreatePQRS";
 import PQRSConfirmation from "./pages/PQRSConfirmation";
 import ManagePQRS from "./pages/ManagePQRS";
+import EditPQRS from "./pages/EditPQRS";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/pqrs/create" element={<CreatePQRS />} />
           <Route path="/pqrs/confirmation" element={<PQRSConfirmation />} />
           <Route path="/pqrs/manage" element={<ManagePQRS />} />
+          <Route path="/pqrs/edit/:id" element={<EditPQRS />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
