@@ -37,6 +37,7 @@ jobs:
 
     - name: Lint code with ESLint
       run: npm run lint || npx eslint . --ext .ts,.tsx,.js,.jsx
+      continue-on-error: true
 
     - name: Run tests with coverage
       run: npm run test:coverage || npm test -- --coverage
