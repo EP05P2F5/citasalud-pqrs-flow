@@ -62,8 +62,8 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       with:
         args: >
-          -Dsonar.projectKey=your-project-key
-          -Dsonar.organization=your-org
+          -Dsonar.projectKey=EP05P2F5_citasalud-pqrs-flow
+          -Dsonar.organization=ep05p2f51
           -Dsonar.sources=src
           -Dsonar.tests=src
           -Dsonar.test.inclusions=**/*.test.ts,**/*.test.tsx,**/*.spec.ts,**/*.spec.tsx
