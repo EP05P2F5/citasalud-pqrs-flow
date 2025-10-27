@@ -1,8 +1,14 @@
 import React from "react";
-import { Menu, Moon, Sun, LogOut, Activity } from "lucide-react";
+import { Menu, User as UserIcon, LogOut, Activity, ChevronDown } from "lucide-react";
 import { MedicalButton } from "../ui/medical-button";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useNavigate } from "react-router-dom";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface AdminHeaderProps {
   showSidebar?: boolean;
@@ -15,7 +21,7 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
   sidebarOpen = false,
   onSidebarToggle,
 }) => {
-  const { isDarkMode, toggleTheme } = useTheme();
+  const { isAccessibilityMode, toggleAccessibility } = useTheme();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -58,22 +64,32 @@ export const AdminHeader: React.FC<AdminHeaderProps> = ({
           <MedicalButton
             variant="ghost"
             size="icon"
-            onClick={toggleTheme}
-            aria-label={isDarkMode ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
-            title={isDarkMode ? "Modo Claro" : "Modo Oscuro"}
+            onClick={toggleAccessibility}
+            aria-label={isAccessibilityMode ? "Desactivar modo accesibilidad" : "Activar modo accesibilidad"}
+            title={isAccessibilityMode ? "Modo Normal" : "Modo Accesibilidad"}
           >
-            {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            <UserIcon className="h-5 w-5" />
           </MedicalButton>
 
-          <MedicalButton
-            variant="outline"
-            size="sm"
-            onClick={handleLogout}
-            className="gap-2"
-          >
-            <LogOut className="h-4 w-4" />
-            <span className="hidden sm:inline">Cerrar Sesión</span>
-          </MedicalButton>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <MedicalButton
+                variant="outline"
+                size="sm"
+                className="gap-2"
+              >
+                <UserIcon className="h-4 w-4" />
+                <span className="hidden sm:inline">Administrador</span>
+                <ChevronDown className="h-4 w-4" />
+              </MedicalButton>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem onClick={handleLogout}>
+                <LogOut className="h-4 w-4 mr-2" />
+                Cerrar Sesión
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
     </header>

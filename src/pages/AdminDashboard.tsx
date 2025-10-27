@@ -26,14 +26,6 @@ const AdminDashboard = () => {
       bgColor: "bg-primary/10"
     },
     {
-      title: "Notificaciones",
-      description: "Revisa el historial de notificaciones enviadas a los usuarios",
-      icon: Bell,
-      path: "/admin/notifications",
-      color: "text-warning",
-      bgColor: "bg-warning/10"
-    },
-    {
       title: "Dashboard PQRS",
       description: "Visualiza métricas y estadísticas de gestión de PQRS",
       icon: BarChart3,
@@ -59,7 +51,7 @@ const AdminDashboard = () => {
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-2">
           {cards.map((card) => {
             const Icon = card.icon;
             return (
@@ -101,28 +93,6 @@ const AdminDashboard = () => {
             );
           })}
         </div>
-
-        <MedicalCard variant="elevated" className="mt-8">
-          <MedicalCardHeader>
-            <MedicalCardTitle>Información del Sistema</MedicalCardTitle>
-          </MedicalCardHeader>
-          <MedicalCardContent>
-            <div className="grid gap-4 sm:grid-cols-3">
-              <div className="text-center p-4 rounded-lg bg-accent/50">
-                <p className="text-2xl font-bold text-primary">24</p>
-                <p className="text-sm text-muted-foreground">PQRS Activas</p>
-              </div>
-              <div className="text-center p-4 rounded-lg bg-accent/50">
-                <p className="text-2xl font-bold text-warning">8</p>
-                <p className="text-sm text-muted-foreground">En Proceso</p>
-              </div>
-              <div className="text-center p-4 rounded-lg bg-accent/50">
-                <p className="text-2xl font-bold text-success">156</p>
-                <p className="text-sm text-muted-foreground">Resueltas</p>
-              </div>
-            </div>
-          </MedicalCardContent>
-        </MedicalCard>
       </div>
     </AdminLayout>
   );

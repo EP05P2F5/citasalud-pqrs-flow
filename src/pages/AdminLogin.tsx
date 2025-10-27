@@ -3,22 +3,29 @@ import { useNavigate } from 'react-router-dom';
 import { MedicalButton } from '@/components/ui/medical-button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Activity, Moon, Sun } from 'lucide-react';
+import { Activity, Eye, EyeOff, User as UserIcon, Lock } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const AdminLogin = () => {
   const navigate = useNavigate();
-  const { isDarkMode, toggleTheme } = useTheme();
+  const { isAccessibilityMode, toggleAccessibility } = useTheme();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    if (!username || !password) {
-      setError('Credenciales inválidas. Intente nuevamente.');
+    if (!username.trim()) {
+      setError('Completa este campo - Usuario es requerido');
+      return;
+    }
+
+    if (!password.trim()) {
+      setError('Completa este campo - Contraseña es requerida');
       return;
     }
 
@@ -33,15 +40,18 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
-      {/* Botón de tema */}
-      <button
-        onClick={toggleTheme}
-        className="fixed top-4 right-4 p-3 rounded-full bg-card border border-border hover:bg-accent transition-colors z-50"
-        aria-label={isDarkMode ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
+    <div className="min-h-screen bg-gradient-surface flex items-center justify-center p-4">
+      {/* Botón de accesibilidad */}
+      <MedicalButton
+        variant="ghost"
+        size="icon"
+        onClick={toggleAccessibility}
+        className="fixed top-4 right-4 z-50"
+        aria-label={isAccessibilityMode ? "Desactivar modo accesibilidad" : "Activar modo accesibilidad"}
+        title={isAccessibilityMode ? "Modo Normal" : "Modo Accesibilidad"}
       >
-        {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-      </button>
+        <UserIcon className="h-5 w-5" />
+      </MedicalButton>
 
       <div className="w-full max-w-md">
         <div className="bg-card border border-border rounded-2xl shadow-lg p-8">
@@ -64,42 +74,60 @@ const AdminLogin = () => {
               <Label htmlFor="username" className="text-foreground font-medium">
                 Usuario Administrativo *
               </Label>
-              <Input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Ingrese su usuario"
-                className="w-full"
-                aria-required="true"
-                aria-invalid={error ? "true" : "false"}
-              />
+              <div className="relative">
+                <UserIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="username"
+                  type="text"
+                  value={username}
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                    if (error) setError('');
+                  }}
+                  placeholder="Ingrese su usuario"
+                  className="w-full pl-10"
+                  aria-required="true"
+                  aria-invalid={error ? "true" : "false"}
+                  aria-describedby={error ? "error-message" : undefined}
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="password" className="text-foreground font-medium">
                 Contraseña *
               </Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Ingrese su contraseña"
-                className="w-full"
-                aria-required="true"
-                aria-invalid={error ? "true" : "false"}
-              />
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (error) setError('');
+                  }}
+                  placeholder="Ingrese su contraseña"
+                  className="w-full pl-10 pr-10"
+                  aria-required="true"
+                  aria-invalid={error ? "true" : "false"}
+                  aria-describedby={error ? "error-message" : undefined}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
             </div>
 
             {error && (
-              <div 
-                className="p-4 bg-destructive/10 border border-destructive rounded-lg"
-                role="alert"
-                aria-live="assertive"
-              >
-                <p className="text-destructive text-sm font-medium">{error}</p>
-              </div>
+              <Alert variant="destructive" id="error-message" role="alert">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
             )}
 
             <MedicalButton
@@ -111,21 +139,32 @@ const AdminLogin = () => {
               Iniciar Sesión Administrativa
             </MedicalButton>
 
-            <div className="text-center pt-4">
-              <button
-                type="button"
-                onClick={() => navigate('/')}
-                className="text-sm text-muted-foreground hover:text-primary transition-colors"
-              >
-                ¿Eres usuario final? Ingresa aquí
-              </button>
+            {/* Información de prueba */}
+            <div className="mt-4 p-3 bg-accent/30 rounded-lg">
+              <p className="text-xs font-medium text-accent-foreground mb-1">
+                Credenciales de prueba:
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Usuario: <span className="font-mono">admin</span> | 
+                Contraseña: <span className="font-mono">admin123</span>
+              </p>
             </div>
           </form>
         </div>
 
-        <p className="text-center text-xs text-muted-foreground mt-6">
-          Sistema seguro y confidencial • CITASalud v1.0
-        </p>
+        {/* Footer */}
+        <div className="text-center mt-6 space-y-2">
+          <button
+            type="button"
+            onClick={() => navigate('/login')}
+            className="text-sm text-muted-foreground hover:text-primary transition-colors"
+          >
+            ¿Eres paciente? Ingresa aquí
+          </button>
+          <p className="text-xs text-muted-foreground">
+            © 2024 CITASalud. Sistema seguro de PQRS médicas.
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -48,12 +48,6 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       isActive: true,
     },
     {
-      href: "/admin/notifications",
-      icon: Bell,
-      label: "Notificaciones",
-      isActive: true,
-    },
-    {
       href: "/admin/statistics",
       icon: BarChart3,
       label: "Estadísticas",
@@ -63,18 +57,6 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       href: "/admin/profile",
       icon: User,
       label: "Perfil",
-      disabled: true,
-    },
-    {
-      href: "/admin/settings",
-      icon: Settings,
-      label: "Ajustes",
-      disabled: true,
-    },
-    {
-      href: "/admin/messages",
-      icon: MessageSquare,
-      label: "Mensajes",
       disabled: true,
     },
     {

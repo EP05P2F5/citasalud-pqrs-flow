@@ -1,5 +1,5 @@
 import React from "react";
-import { Menu, Bell, User, LogOut, Stethoscope, Moon, Sun } from "lucide-react";
+import { Menu, Bell, User, LogOut, Stethoscope } from "lucide-react";
 import { MedicalButton } from "../ui/medical-button";
 import { MedicalCard } from "../ui/medical-card";
 import {
@@ -25,7 +25,7 @@ export const MedicalHeader: React.FC<MedicalHeaderProps> = ({
   sidebarOpen,
   onSidebarToggle,
 }) => {
-  const { isDarkMode, toggleTheme } = useTheme();
+  const { isAccessibilityMode, toggleAccessibility } = useTheme();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -64,15 +64,15 @@ export const MedicalHeader: React.FC<MedicalHeaderProps> = ({
 
           {/* Acciones del usuario */}
           <div className="flex items-center space-x-3">
-            {/* Botón de tema */}
+            {/* Botón de accesibilidad */}
             <MedicalButton
               variant="ghost"
               size="icon"
-              onClick={toggleTheme}
-              aria-label={isDarkMode ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
-              title={isDarkMode ? "Modo Claro" : "Modo Oscuro"}
+              onClick={toggleAccessibility}
+              aria-label={isAccessibilityMode ? "Desactivar modo accesibilidad" : "Activar modo accesibilidad"}
+              title={isAccessibilityMode ? "Modo Normal" : "Modo Accesibilidad"}
             >
-              {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              <User className="h-5 w-5" />
             </MedicalButton>
 
             {/* Notificaciones */}

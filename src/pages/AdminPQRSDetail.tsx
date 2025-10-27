@@ -160,7 +160,7 @@ const AdminPQRSDetail = () => {
             Actualizar Estado
           </MedicalButton>
           <MedicalButton
-            variant="outline"
+            variant="medical"
             className="flex-1"
             onClick={() => navigate(`/admin/respond/${id}`)}
           >

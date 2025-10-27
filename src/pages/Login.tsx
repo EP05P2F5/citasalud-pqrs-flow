@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, Stethoscope, Lock, User as UserIcon, Moon, Sun } from "lucide-react";
+import { Eye, EyeOff, Stethoscope, Lock, User as UserIcon } from "lucide-react";
 import { MedicalButton } from "../components/ui/medical-button";
 import { MedicalCard, MedicalCardContent, MedicalCardDescription, MedicalCardHeader, MedicalCardTitle } from "../components/ui/medical-card";
 import { Input } from "../components/ui/input";
@@ -12,7 +12,7 @@ import { useTheme } from "../contexts/ThemeContext";
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { isDarkMode, toggleTheme } = useTheme();
+  const { isAccessibilityMode, toggleAccessibility } = useTheme();
   
   const [formData, setFormData] = useState({
     username: "",
@@ -79,16 +79,16 @@ const Login: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-surface flex items-center justify-center p-4">
-      {/* Botón de tema */}
+      {/* Botón de accesibilidad */}
       <MedicalButton
         variant="ghost"
         size="icon"
-        onClick={toggleTheme}
+        onClick={toggleAccessibility}
         className="fixed top-4 right-4 z-50"
-        aria-label={isDarkMode ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
-        title={isDarkMode ? "Modo Claro" : "Modo Oscuro"}
+        aria-label={isAccessibilityMode ? "Desactivar modo accesibilidad" : "Activar modo accesibilidad"}
+        title={isAccessibilityMode ? "Modo Normal" : "Modo Accesibilidad"}
       >
-        {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+        <UserIcon className="h-5 w-5" />
       </MedicalButton>
 
       <div className="w-full max-w-md">

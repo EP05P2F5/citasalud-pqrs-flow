@@ -174,4 +174,49 @@ Colores HSL optimizados para accesibilidad y confianza médica
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 150ms;
   }
+
+  /* Modo de accesibilidad - alto contraste y texto más grande */
+  .accessibility-mode {
+    font-size: 112.5%; /* Incrementa el tamaño base de fuente */
+  }
+
+  .accessibility-mode * {
+    font-weight: 500 !important; /* Texto más grueso para mejor legibilidad */
+  }
+
+  .accessibility-mode :root {
+    /* Alto contraste para mejor legibilidad */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
+    --primary: 210 100% 40%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 146 70% 35%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 95%;
+    --muted-foreground: 0 0% 25%;
+    --accent: 0 0% 90%;
+    --accent-foreground: 0 0% 10%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+  }
+
+  .accessibility-mode.dark {
+    /* Alto contraste en modo oscuro */
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 100%;
+    --primary: 210 100% 60%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 146 80% 60%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 85%;
+    --accent: 0 0% 20%;
+    --accent-foreground: 0 0% 95%;
+    --border: 0 0% 80%;
+    --input: 0 0% 80%;
+  }
 }
