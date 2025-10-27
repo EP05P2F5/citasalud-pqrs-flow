@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
   Search, 
@@ -40,6 +40,14 @@ const ManagePQRS: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedPQRS, setSelectedPQRS] = useState<any>(null);
   const [showDetails, setShowDetails] = useState(false);
+
+  // Verificar sesión
+  useEffect(() => {
+    const userSession = localStorage.getItem('userSession');
+    if (!userSession) {
+      navigate('/');
+    }
+  }, [navigate]);
 
   // Datos simulados de PQRS
   const pqrsData = [

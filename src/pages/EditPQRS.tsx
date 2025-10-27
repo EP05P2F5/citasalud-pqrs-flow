@@ -52,6 +52,14 @@ const EditPQRS: React.FC = () => {
     { value: "Otros", label: "Otros" },
   ];
 
+  // Verificar sesión
+  useEffect(() => {
+    const userSession = localStorage.getItem('userSession');
+    if (!userSession) {
+      navigate('/');
+    }
+  }, [navigate]);
+
   useEffect(() => {
     if (pqrsData) {
       setFormData({

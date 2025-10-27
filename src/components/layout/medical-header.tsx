@@ -1,5 +1,5 @@
 import React from "react";
-import { Menu, Bell, User, LogOut, Stethoscope } from "lucide-react";
+import { Menu, Bell, User, LogOut, Stethoscope, Moon, Sun } from "lucide-react";
 import { MedicalButton } from "../ui/medical-button";
 import { MedicalCard } from "../ui/medical-card";
 import {
@@ -11,6 +11,8 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Badge } from "../ui/badge";
+import { useTheme } from "../../contexts/ThemeContext";
+import { useNavigate } from "react-router-dom";
 
 interface MedicalHeaderProps {
   showSidebar?: boolean;
@@ -23,6 +25,14 @@ export const MedicalHeader: React.FC<MedicalHeaderProps> = ({
   sidebarOpen,
   onSidebarToggle,
 }) => {
+  const { isDarkMode, toggleTheme } = useTheme();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('userSession');
+    navigate('/');
+  };
+
   return (
     <header className="sticky top-0 z-50 bg-card border-b border-border shadow-sm">
       <div className="container mx-auto px-6 py-4">
@@ -54,6 +64,17 @@ export const MedicalHeader: React.FC<MedicalHeaderProps> = ({
 
           {/* Acciones del usuario */}
           <div className="flex items-center space-x-3">
+            {/* Botón de tema */}
+            <MedicalButton
+              variant="ghost"
+              size="icon"
+              onClick={toggleTheme}
+              aria-label={isDarkMode ? "Cambiar a modo claro" : "Cambiar a modo oscuro"}
+              title={isDarkMode ? "Modo Claro" : "Modo Oscuro"}
+            >
+              {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            </MedicalButton>
+
             {/* Notificaciones */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -110,7 +131,10 @@ export const MedicalHeader: React.FC<MedicalHeaderProps> = ({
                   Notificaciones
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-destructive focus:text-destructive">
+                <DropdownMenuItem 
+                  className="text-destructive focus:text-destructive"
+                  onClick={handleLogout}
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   Cerrar Sesión
                 </DropdownMenuItem>

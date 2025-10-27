@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FileText, Upload, ArrowLeft, AlertCircle } from "lucide-react";
 import { MedicalLayout } from "../components/layout/medical-layout";
@@ -17,6 +17,14 @@ const CreatePQRS: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Verificar sesión
+  useEffect(() => {
+    const userSession = localStorage.getItem('userSession');
+    if (!userSession) {
+      navigate('/');
+    }
+  }, [navigate]);
 
   const [formData, setFormData] = useState({
     type: "",

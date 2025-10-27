@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FileText, List, Bell, TrendingUp, Clock, CheckCircle, AlertCircle } from "lucide-react";
 import { MedicalLayout } from "../components/layout/medical-layout";
@@ -9,6 +9,14 @@ import { Badge } from "../components/ui/badge";
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Verificar sesión
+  useEffect(() => {
+    const userSession = localStorage.getItem('userSession');
+    if (!userSession) {
+      navigate('/');
+    }
+  }, [navigate]);
 
   // Datos simulados
   const stats = [
