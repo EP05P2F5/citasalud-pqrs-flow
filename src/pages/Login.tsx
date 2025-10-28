@@ -84,11 +84,14 @@ const Login: React.FC = () => {
         variant="ghost"
         size="icon"
         onClick={toggleAccessibility}
-        className="fixed top-4 right-4 z-50"
+        className={`fixed top-4 right-4 z-50 ${isAccessibilityMode ? "bg-primary/20" : ""}`}
         aria-label={isAccessibilityMode ? "Desactivar modo accesibilidad" : "Activar modo accesibilidad"}
         title={isAccessibilityMode ? "Modo Normal" : "Modo Accesibilidad"}
       >
-        <UserIcon className="h-5 w-5" />
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
       </MedicalButton>
 
       <div className="w-full max-w-md">
@@ -200,7 +203,7 @@ const Login: React.FC = () => {
         <div className="text-center mt-6 space-y-2">
           <button
             type="button"
-            onClick={() => navigate('/admin/login')}
+            onClick={() => navigate('/admin-login')}
             className="text-sm text-muted-foreground hover:text-primary transition-colors"
           >
             ¿Eres administrador? Ingresa aquí

@@ -31,6 +31,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Login />} />
+            <Route path="/patient-login" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/pqrs/create" element={<CreatePQRS />} />
             <Route path="/pqrs/confirmation" element={<PQRSConfirmation />} />
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/pqrs/edit/:id" element={<EditPQRS />} />
             
             {/* Rutas administrativas */}
+            <Route path="/admin-login" element={<AdminLogin />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/manage-pqrs" element={<AdminManagePQRS />} />

@@ -177,46 +177,58 @@ Colores HSL optimizados para accesibilidad y confianza médica
 
   /* Modo de accesibilidad - alto contraste y texto más grande */
   .accessibility-mode {
-    font-size: 112.5%; /* Incrementa el tamaño base de fuente */
-  }
-
-  .accessibility-mode * {
-    font-weight: 500 !important; /* Texto más grueso para mejor legibilidad */
-  }
-
-  .accessibility-mode :root {
+    font-size: 118% !important; /* Incrementa el tamaño base de fuente */
+    
     /* Alto contraste para mejor legibilidad */
-    --background: 0 0% 100%;
-    --foreground: 0 0% 0%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
-    --primary: 210 100% 40%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 146 70% 35%;
-    --secondary-foreground: 0 0% 100%;
-    --muted: 0 0% 95%;
-    --muted-foreground: 0 0% 25%;
-    --accent: 0 0% 90%;
-    --accent-foreground: 0 0% 10%;
-    --border: 0 0% 20%;
-    --input: 0 0% 20%;
-  }
-
-  .accessibility-mode.dark {
-    /* Alto contraste en modo oscuro */
     --background: 0 0% 0%;
     --foreground: 0 0% 100%;
     --card: 0 0% 10%;
     --card-foreground: 0 0% 100%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 100%;
     --primary: 210 100% 60%;
     --primary-foreground: 0 0% 0%;
+    --primary-hover: 210 100% 65%;
     --secondary: 146 80% 60%;
     --secondary-foreground: 0 0% 0%;
+    --secondary-hover: 146 80% 65%;
     --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 85%;
+    --muted-foreground: 0 0% 90%;
     --accent: 0 0% 20%;
-    --accent-foreground: 0 0% 95%;
-    --border: 0 0% 80%;
-    --input: 0 0% 80%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 90% 65%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 146 90% 60%;
+    --success-foreground: 0 0% 0%;
+    --warning: 38 100% 60%;
+    --warning-foreground: 0 0% 0%;
+    --border: 0 0% 40%;
+    --input: 0 0% 40%;
+    --ring: 210 100% 60%;
+  }
+
+  .accessibility-mode * {
+    font-weight: 500 !important; /* Texto más grueso para mejor legibilidad */
+    border-width: 2px !important;
+  }
+
+  .accessibility-mode button,
+  .accessibility-mode input,
+  .accessibility-mode textarea,
+  .accessibility-mode select,
+  .accessibility-mode label {
+    font-weight: 600 !important;
+  }
+
+  .accessibility-mode a,
+  .accessibility-mode button {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+
+  .accessibility-mode :focus-visible {
+    outline: 4px solid hsl(var(--primary));
+    outline-offset: 4px;
   }
 }
