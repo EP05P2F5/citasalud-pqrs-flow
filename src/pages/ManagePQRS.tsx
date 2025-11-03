@@ -1,28 +1,29 @@
+// src/pages/ManagePQRS.tsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { 
-  Search, 
-  Filter, 
-  Eye, 
-  Edit, 
-  FileText, 
+import {
+  Search,
+  Filter,
+  FileText,
   Calendar,
-  Clock,
-  CheckCircle,
-  AlertCircle,
-  MoreHorizontal
+  MoreHorizontal,
+  Eye,
 } from "lucide-react";
 import { MedicalLayout } from "../components/layout/medical-layout";
-import { MedicalButton } from "../components/ui/medical-button";
-import { MedicalCard, MedicalCardContent, MedicalCardDescription, MedicalCardHeader, MedicalCardTitle } from "../components/ui/medical-card";
+import {
+  MedicalCard,
+  MedicalCardContent,
+  MedicalCardDescription,
+  MedicalCardHeader,
+  MedicalCardTitle,
+} from "../components/ui/medical-card";
 import { Input } from "../components/ui/input";
 import { Badge } from "../components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import { MedicalButton } from "../components/ui/medical-button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
 import {
@@ -32,161 +33,110 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
+import { getPQRSByUser, getUsuarioByUsername } from "../services/pqrsService";
+import { getCurrentUser } from "../services/authService";
 
 const ManagePQRS: React.FC = () => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [pqrsList, setPqrsList] = useState<any[]>([]);
   const [selectedPQRS, setSelectedPQRS] = useState<any>(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Verificar sesión
+  // -----------------------------
+  // Cargar PQRS del usuario
+  // -----------------------------
   useEffect(() => {
-    const userSession = localStorage.getItem('userSession');
-    if (!userSession) {
-      navigate('/');
-    }
-  }, [navigate]);
+    const fetchData = async () => {
+      try {
+        const currentUser = getCurrentUser();
+        if (!currentUser?.username) throw new Error("Usuario no autenticado.");
 
-  // Datos simulados de PQRS
-  const pqrsData = [
-    {
-      id: "PQRS-2024-001",
-      type: "Petición",
-      title: "Solicitud cambio de horario cita",
-      description: "Necesito cambiar mi cita del 20 de diciembre debido a un compromiso laboral imprevisto. Solicito reprogramación para la semana siguiente.",
-      category: "Citas Médicas",
-      status: "En proceso",
-      priority: "Normal",
-      createdAt: "2024-12-15T10:30:00Z",
-      updatedAt: "2024-12-16T14:20:00Z",
-      canEdit: true,
-      attachment: "Carta_laboral.pdf",
-    },
-    {
-      id: "PQRS-2024-002",
-      type: "Queja",
-      title: "Demora en atención especializada",
-      description: "He esperado más de 3 horas en consulta externa de cardiología sin recibir atención. La cita estaba programada para las 8:00 AM.",
-      category: "Atención al Usuario",
-      status: "Resuelta",
-      priority: "Alta",
-      createdAt: "2024-12-12T08:15:00Z",
-      updatedAt: "2024-12-14T16:45:00Z", 
-      canEdit: false,
-      response: "Estimado usuario, hemos revisado su caso y implementado mejoras en el flujo de atención. Se ha contactado con usted para ofrecer una disculpa formal y reprogramar su cita.",
-    },
-    {
-      id: "PQRS-2024-003",
-      type: "Sugerencia",
-      title: "Mejora en sistema de recordatorios",
-      description: "Sugiero implementar recordatorios por WhatsApp además del SMS para las citas médicas, ya que sería más efectivo y económico.",
-      category: "Otros",
-      status: "Radicada",
-      priority: "Baja",
-      createdAt: "2024-12-10T15:22:00Z",
-      updatedAt: "2024-12-10T15:22:00Z",
-      canEdit: true,
-    },
-    {
-      id: "PQRS-2024-004",
-      type: "Reclamo",
-      title: "Error en facturación de procedimiento",
-      description: "Se me está cobrando un procedimiento que no se realizó según mi historia clínica. El valor facturado no corresponde al servicio recibido.",
-      category: "Facturación",
-      status: "En proceso",
-      priority: "Alta",
-      createdAt: "2024-12-08T11:10:00Z",
-      updatedAt: "2024-12-12T09:30:00Z",
-      canEdit: true,
-    },
-    {
-      id: "PQRS-2024-005",
-      type: "Petición",
-      title: "Solicitud de historia clínica",
-      description: "Necesito copia de mi historia clínica completa para segunda opinión médica. Adjunto autorización firmada.",
-      category: "Otros",
-      status: "Resuelta",
-      priority: "Normal",
-      createdAt: "2024-12-05T13:45:00Z",
-      updatedAt: "2024-12-07T10:15:00Z",
-      canEdit: false,
-      attachment: "Autorizacion_firmada.pdf",
-      response: "Su historia clínica ha sido enviada por correo certificado a la dirección registrada. Número de radicado: HC-2024-789.",
-    },
-  ];
+        const usuario = await getUsuarioByUsername(currentUser.username);
+        const data = await getPQRSByUser(usuario.idUsuario);
+        setPqrsList(data);
+      } catch (error) {
+        console.error("Error al cargar PQRS:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
-  const getStatusInfo = (status: string) => {
-    switch (status) {
-      case "Radicada":
-        return { 
-          variant: "outline" as const, 
-          icon: Clock, 
-          color: "text-warning" 
-        };
-      case "En proceso":
-        return { 
-          variant: "secondary" as const, 
-          icon: AlertCircle, 
-          color: "text-primary" 
-        };
-      case "Resuelta":
-        return { 
-          variant: "default" as const, 
-          icon: CheckCircle, 
-          color: "text-success" 
-        };
-      default:
-        return { 
-          variant: "outline" as const, 
-          icon: Clock, 
-          color: "text-muted-foreground" 
-        };
-    }
+  // -----------------------------
+  // Filtros y conteos
+  // -----------------------------
+  const filteredPQRS = pqrsList.filter((pqrs) => {
+    const matchesSearch =
+      pqrs.descripcion.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      pqrs.radicado.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus =
+      statusFilter === "all" || pqrs.estado === statusFilter;
+
+    return matchesSearch && matchesStatus;
+  });
+
+  // 🔹 Cálculo correcto de los totales
+  const totalActivas = pqrsList.filter(
+    (p) => p.estado === "Pendiente" || p.estado === "En proceso"
+  ).length;
+
+  const totalResueltas = pqrsList.filter(
+    (p) => p.estado === "Resuelta" || p.estado === "Cerrada"
+  ).length;
+
+  const totalAnuladas = pqrsList.filter((p) => p.estado === "Anulada").length;
+
+  // 🔹 Mapeo de tipo de PQRS
+  const tipoPQRSMap: Record<number, string> = {
+    1: "Queja",
+    2: "Reclamo",
+    3: "Sugerencia",
+    4: "Petición",
+    5: "Felicitación",
   };
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "Alta":
-        return "text-destructive";
-      case "Normal":
-        return "text-warning";
-      case "Baja":
-        return "text-muted-foreground";
-      default:
-        return "text-muted-foreground";
-    }
+  // 🔹 Color dinámico del estado
+  const getEstadoColor = (estado: string): string => {
+    if (estado === "Pendiente" || estado === "En proceso") return "text-blue-600";
+    if (estado === "Resuelta" || estado === "Cerrada") return "text-green-600";
+    if (estado === "Anulada") return "text-red-600";
+    return "text-muted-foreground";
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('es-CO', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(dateString).toLocaleDateString("es-CO", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
-
-  const filteredPQRS = pqrsData.filter(pqrs => {
-    const matchesSearch = pqrs.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         pqrs.id.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || pqrs.status === statusFilter;
-    
-    return matchesSearch && matchesStatus;
-  });
 
   const handleViewDetails = (pqrs: any) => {
     setSelectedPQRS(pqrs);
     setShowDetails(true);
   };
 
-  const handleEdit = (pqrs: any) => {
-    if (pqrs.canEdit && (pqrs.status === "Radicada" || pqrs.status === "En proceso")) {
-      navigate(`/pqrs/edit/${pqrs.id}`, { state: { pqrs } });
-    }
-  };
+  if (loading) {
+    return (
+      <MedicalLayout>
+        <div className="flex justify-center items-center h-full">
+          <p className="text-muted-foreground">Cargando PQRS...</p>
+        </div>
+      </MedicalLayout>
+    );
+  }
 
   return (
     <MedicalLayout
@@ -208,28 +158,28 @@ const ManagePQRS: React.FC = () => {
         <MedicalCard>
           <MedicalCardContent className="p-4">
             <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Buscar por título o número de PQRS..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Buscar por descripción o radicado..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
               </div>
               <div className="flex gap-2">
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger className="w-48">
                     <Filter className="mr-2 h-4 w-4" />
-                    <SelectValue />
+                    <SelectValue placeholder="Filtrar por estado" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">Todos los estados</SelectItem>
-                    <SelectItem value="Radicada">Radicada</SelectItem>
+                    <SelectItem value="Pendiente">Pendiente</SelectItem>
                     <SelectItem value="En proceso">En proceso</SelectItem>
                     <SelectItem value="Resuelta">Resuelta</SelectItem>
+                    <SelectItem value="Cerrada">Cerrada</SelectItem>
+                    <SelectItem value="Anulada">Anulada</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -237,41 +187,26 @@ const ManagePQRS: React.FC = () => {
           </MedicalCardContent>
         </MedicalCard>
 
-        {/* Estadísticas rápidas */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <MedicalCard variant="gradient">
-            <MedicalCardContent className="p-4 text-center">
-              <p className="text-2xl font-bold text-primary">
-                {pqrsData.length}
-              </p>
-              <p className="text-sm text-muted-foreground">Total PQRS</p>
-            </MedicalCardContent>
-          </MedicalCard>
-          
+        {/* Cuadros de resumen */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <MedicalCard>
             <MedicalCardContent className="p-4 text-center">
-              <p className="text-2xl font-bold text-warning">
-                {pqrsData.filter(p => p.status === "Radicada").length}
-              </p>
-              <p className="text-sm text-muted-foreground">Radicadas</p>
+              <p className="text-2xl font-bold text-primary">{totalActivas}</p>
+              <p className="text-sm text-muted-foreground">PQRS Activas</p>
             </MedicalCardContent>
           </MedicalCard>
-          
+
           <MedicalCard>
             <MedicalCardContent className="p-4 text-center">
-              <p className="text-2xl font-bold text-primary">
-                {pqrsData.filter(p => p.status === "En proceso").length}
-              </p>
-              <p className="text-sm text-muted-foreground">En proceso</p>
+              <p className="text-2xl font-bold text-success">{totalResueltas}</p>
+              <p className="text-sm text-muted-foreground">Resueltas / Cerradas</p>
             </MedicalCardContent>
           </MedicalCard>
-          
+
           <MedicalCard>
             <MedicalCardContent className="p-4 text-center">
-              <p className="text-2xl font-bold text-success">
-                {pqrsData.filter(p => p.status === "Resuelta").length}
-              </p>
-              <p className="text-sm text-muted-foreground">Resueltas</p>
+              <p className="text-2xl font-bold text-destructive">{totalAnuladas}</p>
+              <p className="text-sm text-muted-foreground">Anuladas</p>
             </MedicalCardContent>
           </MedicalCard>
         </div>
@@ -292,90 +227,68 @@ const ManagePQRS: React.FC = () => {
               <div className="text-center py-8">
                 <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <p className="text-muted-foreground">
-                  {searchTerm || statusFilter !== "all" 
-                    ? "No se found PQRS que coincidan con los filtros aplicados"
-                    : "No tiene PQRS registradas en el sistema"
-                  }
+                  {searchTerm || statusFilter !== "all"
+                    ? "No se encontraron PQRS que coincidan con los filtros aplicados"
+                    : "No tiene PQRS registradas en el sistema"}
                 </p>
                 <MedicalButton
                   variant="medical"
                   className="mt-4"
                   onClick={() => navigate("/pqrs/create")}
                 >
-                  Crear primera PQRS
+                  Crear PQRS
                 </MedicalButton>
               </div>
             ) : (
               <div className="space-y-4">
-                {filteredPQRS.map((pqrs) => {
-                  const statusInfo = getStatusInfo(pqrs.status);
-                  const StatusIcon = statusInfo.icon;
-                  
-                  return (
-                    <div
-                      key={pqrs.id}
-                      className="border border-border rounded-lg p-4 hover:shadow-md transition-shadow bg-card"
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1 space-y-2">
-                          {/* Header con ID y tipo */}
-                          <div className="flex items-center space-x-3">
-                            <h3 className="font-bold text-foreground">{pqrs.id}</h3>
-                            <Badge variant="outline" className="text-xs">
-                              {pqrs.type}
-                            </Badge>
-                            <Badge variant={statusInfo.variant} className="text-xs">
-                              <StatusIcon className="mr-1 h-3 w-3" />
-                              {pqrs.status}
-                            </Badge>
-                          </div>
-                          
-                          {/* Título */}
-                          <h4 className="text-lg font-medium text-foreground hover:text-primary cursor-pointer"
-                              onClick={() => handleViewDetails(pqrs)}>
-                            {pqrs.title}
-                          </h4>
-                          
-                          {/* Metadatos */}
-                          <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
-                            <div className="flex items-center">
-                              <Calendar className="mr-1 h-3 w-3" />
-                              Creado: {formatDate(pqrs.createdAt)}
-                            </div>
-                            <div className="flex items-center">
-                              <Clock className="mr-1 h-3 w-3" />
-                              Actualizado: {formatDate(pqrs.updatedAt)}
-                            </div>
-                            <div className={`font-medium ${getPriorityColor(pqrs.priority)}`}>
-                              Prioridad: {pqrs.priority}
-                            </div>
-                          </div>
+                {filteredPQRS.map((pqrs) => (
+                  <div
+                    key={pqrs.idPqrs}
+                    className="border border-border rounded-lg p-4 hover:shadow-md transition-shadow bg-card"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 space-y-2">
+                        <div className="flex items-center space-x-3">
+                          <h3 className="font-bold text-foreground">
+                            {pqrs.radicado}
+                          </h3>
+                          <Badge
+                            variant="outline"
+                            className={`text-xs font-medium ${getEstadoColor(pqrs.estado)}`}
+                          >
+                            {pqrs.estado}
+                          </Badge>
                         </div>
-                        
-                        {/* Acciones */}
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <MedicalButton variant="ghost" size="icon">
-                              <MoreHorizontal className="h-4 w-4" />
-                            </MedicalButton>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => handleViewDetails(pqrs)}>
-                              <Eye className="mr-2 h-4 w-4" />
-                              Ver detalles
-                            </DropdownMenuItem>
-                            {pqrs.canEdit && (pqrs.status === "Radicada" || pqrs.status === "En proceso") && (
-                              <DropdownMenuItem onClick={() => handleEdit(pqrs)}>
-                                <Edit className="mr-2 h-4 w-4" />
-                                Editar
-                              </DropdownMenuItem>
-                            )}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
+
+                        <div className="text-sm text-muted-foreground">
+                          <Calendar className="inline mr-1 h-3 w-3" />
+                          Creado: {formatDate(pqrs.fechaDeGeneracion)}
+                        </div>
+
+                        <p className="text-sm font-medium text-foreground">
+                          Tipo de PQRS:{" "}
+                          <span className="text-muted-foreground">
+                            {tipoPQRSMap[pqrs.idTipo] || "Desconocido"}
+                          </span>
+                        </p>
                       </div>
+
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <MedicalButton variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </MedicalButton>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => handleViewDetails(pqrs)}>
+                            <Eye className="mr-2 h-4 w-4" />
+                            Ver detalles
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             )}
           </MedicalCardContent>
@@ -385,84 +298,28 @@ const ManagePQRS: React.FC = () => {
         <Dialog open={showDetails} onOpenChange={setShowDetails}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle className="flex items-center space-x-2">
-                <FileText className="h-5 w-5 text-primary" />
-                <span>Detalles de PQRS</span>
-              </DialogTitle>
+              <DialogTitle>Detalles de PQRS</DialogTitle>
               <DialogDescription>
                 Información completa de la solicitud seleccionada
               </DialogDescription>
             </DialogHeader>
-            
             {selectedPQRS && (
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Número</p>
-                    <p className="font-semibold">{selectedPQRS.id}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Tipo</p>
-                    <p className="font-semibold">{selectedPQRS.type}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Estado</p>
-                    <Badge variant={getStatusInfo(selectedPQRS.status).variant}>
-                      {selectedPQRS.status}
-                    </Badge>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Prioridad</p>
-                    <p className={`font-semibold ${getPriorityColor(selectedPQRS.priority)}`}>
-                      {selectedPQRS.priority}
+                <p><strong>Radicado:</strong> {selectedPQRS.radicado}</p>
+                <p><strong>Estado:</strong> {selectedPQRS.estado}</p>
+                <p><strong>Tipo:</strong> {tipoPQRSMap[selectedPQRS.idTipo] || "Desconocido"}</p>
+                <p><strong>Fecha de creación:</strong> {formatDate(selectedPQRS.fechaDeGeneracion)}</p>
+                <p><strong>Descripción:</strong> {selectedPQRS.descripcion}</p>
+                {selectedPQRS.respuesta && (
+                  <div className="p-4 bg-success/10 rounded-lg border border-success/20">
+                    <p className="text-sm font-medium text-success mb-2">
+                      Respuesta
+                    </p>
+                    <p className="text-sm leading-relaxed">
+                      {selectedPQRS.respuesta}
                     </p>
                   </div>
-                </div>
-                
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Título</p>
-                  <p className="font-semibold">{selectedPQRS.title}</p>
-                </div>
-                
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Descripción</p>
-                  <p className="text-sm leading-relaxed">{selectedPQRS.description}</p>
-                </div>
-                
-                {selectedPQRS.attachment && (
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">Archivo adjunto</p>
-                    <p className="text-sm text-primary">{selectedPQRS.attachment}</p>
-                  </div>
                 )}
-                
-                {selectedPQRS.response && (
-                  <div className="p-4 bg-success/10 rounded-lg border border-success/20">
-                    <p className="text-sm font-medium text-success mb-2">Respuesta</p>
-                    <p className="text-sm leading-relaxed">{selectedPQRS.response}</p>
-                  </div>
-                )}
-                
-                <div className="flex justify-between items-center pt-4 border-t">
-                  <div className="text-xs text-muted-foreground">
-                    <p>Creado: {formatDate(selectedPQRS.createdAt)}</p>
-                    <p>Actualizado: {formatDate(selectedPQRS.updatedAt)}</p>
-                  </div>
-                  
-                  {selectedPQRS.canEdit && (selectedPQRS.status === "Radicada" || selectedPQRS.status === "En proceso") && (
-                    <MedicalButton
-                      variant="medical"
-                      size="sm"
-                      onClick={() => {
-                        setShowDetails(false);
-                        handleEdit(selectedPQRS);
-                      }}
-                    >
-                      <Edit className="mr-2 h-4 w-4" />
-                      Editar
-                    </MedicalButton>
-                  )}
-                </div>
               </div>
             )}
           </DialogContent>

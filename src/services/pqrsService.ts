@@ -111,8 +111,20 @@ export const crearPQRS = async (
   }
 };
 
-// 🔹 Obtener PQRS de un usuario (opcional)
-export const getPQRSByUser = async (usuarioId: number) => {
+export interface PQRSItem {
+  idPqrs: number;
+  idUsuario: number;
+  idTipo: number;
+  descripcion: string;
+  fechaDeGeneracion: string;
+  radicado: string;
+  estado: string;
+  fechaDeRespuesta: string | null;
+  respuesta: string | null;
+}
+
+// 🔹 Obtener PQRS de un usuario
+export const getPQRSByUser = async (usuarioId: number): Promise<PQRSItem[]> => {
   try {
     const token = getAuthToken();
     if (!token) throw new Error("Token no disponible.");
@@ -126,38 +138,14 @@ export const getPQRSByUser = async (usuarioId: number) => {
     });
 
     if (!response.ok) {
-      throw new Error("Error al obtener las PQRS del usuario.");
+      const errorText = await response.text();
+      throw new Error(errorText || "Error al obtener las PQRS del usuario.");
     }
 
     return await response.json();
   } catch (error: any) {
     console.error("Error en getPQRSByUser:", error);
     throw new Error(error.message || "Error al obtener PQRS.");
-  }
-};
-
-// 🔹 Obtener PQRS por radicado (opcional)
-export const getPQRSByRadicado = async (radicado: string) => {
-  try {
-    const token = getAuthToken();
-    if (!token) throw new Error("Token no disponible.");
-
-    const response = await fetch(`${API_URL}/pqrs/radicado/${radicado}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error("Error al consultar PQRS por radicado.");
-    }
-
-    return await response.json();
-  } catch (error: any) {
-    console.error("Error en getPQRSByRadicado:", error);
-    throw new Error(error.message || "Error al consultar PQRS.");
   }
 };
 
