@@ -36,7 +36,6 @@ const App = () => (
             {/* Rutas públicas */}
             <Route path="/" element={<Login />} />
             <Route path="/patient-login" element={<Login />} />
-            <Route path="/pqrs/create" element={<CreatePQRS />} />
             <Route path="/pqrs/confirmation" element={<PQRSConfirmation />} />
             <Route path="/pqrs/manage" element={<ManagePQRS />} />
             <Route path="/pqrs/edit/:id" element={<EditPQRS />} />
@@ -48,6 +47,14 @@ const App = () => (
               element={
                 <ProtectedRoute requiredRole="Usuario">
                   <Dashboard />
+                </ProtectedRoute>
+                } 
+            />
+            <Route 
+              path="/pqrs/create"
+              element={
+                <ProtectedRoute requiredRole="Usuario">
+                  <CreatePQRS />
                 </ProtectedRoute>
                 } 
             />
