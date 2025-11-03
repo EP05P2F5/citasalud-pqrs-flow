@@ -6,39 +6,48 @@ import { Label } from '@/components/ui/label';
 import { Activity, Eye, EyeOff, User as UserIcon, Lock } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { login } from "@/services/authService"; // 👈 importa el servicio
 
 const AdminLogin = () => {
   const navigate = useNavigate();
   const { isAccessibilityMode, toggleAccessibility } = useTheme();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
-    if (!username.trim()) {
-      setError('Completa este campo - Usuario es requerido');
+    if (!username.trim() || !password.trim()) {
+      setError("Usuario y contraseña son requeridos");
       return;
     }
 
-    if (!password.trim()) {
-      setError('Completa este campo - Contraseña es requerida');
-      return;
-    }
+    setLoading(true);
+    try {
+      // 👇 Llamada real al backend
+      const response = await login({
+        nickname: username,
+        password: password,
+      });
 
-    // Simulación de validación administrativa
-    // En producción, esto debe validarse con el backend
-    if (username === 'admin' && password === 'admin123') {
-      localStorage.setItem('adminSession', 'true');
-      navigate('/admin/dashboard');
-    } else {
-      setError('Credenciales inválidas. Intente nuevamente.');
+      // Si devuelve token o éxito
+      if (response.token) {
+        localStorage.setItem("token", response.token);
+        localStorage.setItem("adminSession", "true");
+        navigate("/admin/dashboard");
+      } else {
+        setError(response.message || "Credenciales inválidas");
+      }
+    } catch (err: any) {
+      setError(err.message || "Error de autenticación");
+    } finally {
+      setLoading(false);
     }
   };
-
   return (
     <div className="min-h-screen bg-gradient-surface flex items-center justify-center p-4">
       {/* Botón de accesibilidad */}
