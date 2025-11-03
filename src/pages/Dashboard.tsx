@@ -10,13 +10,12 @@ const Dashboard: React.FC = () => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Verificar sesión
   useEffect(() => {
-    const userSession = localStorage.getItem('userSession');
-    if (!userSession) {
-      navigate('/');
-    }
-  }, [navigate]);
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    navigate('/');
+  }
+}, [navigate]);
 
   // Datos simulados
   const stats = [

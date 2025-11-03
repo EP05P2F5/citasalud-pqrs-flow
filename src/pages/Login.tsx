@@ -2,18 +2,25 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, Stethoscope, Lock, User as UserIcon } from "lucide-react";
 import { MedicalButton } from "../components/ui/medical-button";
-import { MedicalCard, MedicalCardContent, MedicalCardDescription, MedicalCardHeader, MedicalCardTitle } from "../components/ui/medical-card";
+import {
+  MedicalCard,
+  MedicalCardContent,
+  MedicalCardDescription,
+  MedicalCardHeader,
+  MedicalCardTitle,
+} from "../components/ui/medical-card";
 import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { useToast } from "../hooks/use-toast";
 import { useTheme } from "../contexts/ThemeContext";
+import { login } from "@/services/authService"; // 👈 usamos la API real
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { isAccessibilityMode, toggleAccessibility } = useTheme();
-  
+
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -24,17 +31,16 @@ const Login: React.FC = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
-    // Limpiar error cuando el usuario empiece a escribir
     if (error) setError("");
   };
 
   const validateForm = () => {
     if (!formData.username.trim() || !formData.password.trim()) {
-      setError("No es posible iniciar sesión - Complete todos los campos requeridos");
+      setError("Completa todos los campos requeridos.");
       return false;
     }
     return true;
@@ -42,36 +48,42 @@ const Login: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     setIsLoading(true);
     setError("");
 
     try {
-      // Simular validación de login
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Simular credenciales válidas
-      if (formData.username === "usuario" && formData.password === "123456") {
+      const data = await login({
+        nickname: formData.username,
+        password: formData.password,
+      });
+
+      if (data.token) {
+        // Guardar el token y rol
+        localStorage.setItem("authToken", data.token);
+        if (data.rol) {
+          localStorage.setItem("userRole", data.rol);
+        }
+
         toast({
           title: "Acceso autorizado",
           description: "Bienvenido al sistema PQRS de CITASalud",
           variant: "default",
         });
-        
-        // Guardar sesión (simulado)
-        localStorage.setItem("userSession", JSON.stringify({
-          username: formData.username,
-          loginTime: new Date().toISOString(),
-        }));
-        
-        navigate("/dashboard");
+
+        // Redirigir según el rol
+        if (data.rol === "Usuario") {
+          navigate("/dashboard");
+        } else {
+          navigate("/login");
+        }
       } else {
-        setError("No es posible iniciar sesión - Credenciales incorrectas");
+        setError("Credenciales inválidas.");
       }
-    } catch (err) {
-      setError("No es posible iniciar sesión - Error del servidor");
+    } catch (err: any) {
+      setError(err.message || "Error de conexión con el servidor.");
     } finally {
       setIsLoading(false);
     }
@@ -84,13 +96,29 @@ const Login: React.FC = () => {
         variant="ghost"
         size="icon"
         onClick={toggleAccessibility}
-        className={`fixed top-4 right-4 z-50 ${isAccessibilityMode ? "bg-primary/20" : ""}`}
-        aria-label={isAccessibilityMode ? "Desactivar modo accesibilidad" : "Activar modo accesibilidad"}
+        className={`fixed top-4 right-4 z-50 ${
+          isAccessibilityMode ? "bg-primary/20" : ""
+        }`}
+        aria-label={
+          isAccessibilityMode
+            ? "Desactivar modo accesibilidad"
+            : "Activar modo accesibilidad"
+        }
         title={isAccessibilityMode ? "Modo Normal" : "Modo Accesibilidad"}
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-          <circle cx="12" cy="12" r="3"/>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+          <circle cx="12" cy="12" r="3" />
         </svg>
       </MedicalButton>
 
@@ -100,8 +128,12 @@ const Login: React.FC = () => {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-primary rounded-2xl mb-4 shadow-primary">
             <Stethoscope className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">CITASalud</h1>
-          <p className="text-muted-foreground">Sistema PQRS - Acceso Seguro</p>
+          <h1 className="text-3xl font-bold text-foreground mb-2">
+            CITASalud
+          </h1>
+          <p className="text-muted-foreground">
+            Sistema PQRS - Acceso Seguro
+          </p>
         </div>
 
         {/* Formulario de login */}
@@ -112,10 +144,10 @@ const Login: React.FC = () => {
               Ingrese sus credenciales para acceder al sistema de soporte
             </MedicalCardDescription>
           </MedicalCardHeader>
-          
+
           <MedicalCardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Campo Usuario */}
+              {/* Usuario */}
               <div className="space-y-2">
                 <Label htmlFor="username" className="text-sm font-medium">
                   Usuario *
@@ -130,14 +162,12 @@ const Login: React.FC = () => {
                     onChange={handleInputChange}
                     placeholder="Ingrese su usuario"
                     className="pl-10"
-                    aria-describedby={error ? "error-message" : undefined}
-                    aria-invalid={!!error}
                     required
                   />
                 </div>
               </div>
 
-              {/* Campo Contraseña */}
+              {/* Contraseña */}
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-sm font-medium">
                   Contraseña *
@@ -152,29 +182,35 @@ const Login: React.FC = () => {
                     onChange={handleInputChange}
                     placeholder="Ingrese su contraseña"
                     className="pl-10 pr-10"
-                    aria-describedby={error ? "error-message" : undefined}
-                    aria-invalid={!!error}
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                    aria-label={
+                      showPassword
+                        ? "Ocultar contraseña"
+                        : "Mostrar contraseña"
+                    }
                   >
-                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
                   </button>
                 </div>
               </div>
 
-              {/* Mensaje de error */}
+              {/* Error */}
               {error && (
-                <Alert variant="destructive" id="error-message" role="alert">
+                <Alert variant="destructive" role="alert">
                   <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
 
-              {/* Botón de login */}
+              {/* Botón */}
               <MedicalButton
                 type="submit"
                 variant="medical"
@@ -186,13 +222,13 @@ const Login: React.FC = () => {
               </MedicalButton>
             </form>
 
-            {/* Información de prueba */}
+            {/* Info de prueba */}
             <div className="mt-6 p-3 bg-accent/30 rounded-lg">
               <p className="text-xs font-medium text-accent-foreground mb-1">
                 Credenciales de prueba:
               </p>
               <p className="text-xs text-muted-foreground">
-                Usuario: <span className="font-mono">usuario</span> | 
+                Usuario: <span className="font-mono">usuario</span> |{" "}
                 Contraseña: <span className="font-mono">123456</span>
               </p>
             </div>
@@ -203,7 +239,7 @@ const Login: React.FC = () => {
         <div className="text-center mt-6 space-y-2">
           <button
             type="button"
-            onClick={() => navigate('/admin-login')}
+            onClick={() => navigate("/admin-login")}
             className="text-sm text-muted-foreground hover:text-primary transition-colors"
           >
             ¿Eres administrador? Ingresa aquí

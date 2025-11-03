@@ -10,9 +10,9 @@ const AdminDashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    const adminSession = localStorage.getItem('adminSession');
-    if (!adminSession) {
-      navigate('/admin/login');
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      navigate('/');
     }
   }, [navigate]);
 

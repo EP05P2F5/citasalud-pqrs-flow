@@ -5,18 +5,19 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  token?: string;
-  message?: string;
-  // agrega otros campos que tu backend devuelva
+  rol: string;
+  email: string;
+  token: string;
+  username: string;
 }
+
+const API_URL = "https://citasalud-feature5-h6aqfke8h8c2c3ha.canadacentral-01.azurewebsites.net";
 
 export const login = async (credentials: LoginRequest): Promise<LoginResponse> => {
   try {
-    const response = await fetch("https://citasalud-feature5-h6aqfke8h8c2c3ha.canadacentral-01.azurewebsites.net/auth/login", {
+    const response = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(credentials),
     });
 
@@ -25,9 +26,32 @@ export const login = async (credentials: LoginRequest): Promise<LoginResponse> =
       throw new Error(errorText || "Error en la autenticación");
     }
 
-    return await response.json();
+    const data: LoginResponse = await response.json();
+
+    // ✅ Guardar sesión
+    localStorage.setItem("user", JSON.stringify(data));
+
+    return data;
   } catch (error: any) {
     console.error("Error en login:", error);
     throw new Error(error.message || "Error de conexión con el servidor");
   }
+};
+
+// ✅ Obtener usuario actual
+export const getCurrentUser = () => {
+  const storedUser = localStorage.getItem("user");
+  return storedUser ? JSON.parse(storedUser) : null;
+};
+
+// ✅ Obtener token
+export const getAuthToken = () => {
+  const user = getCurrentUser();
+  return user?.token || null;
+};
+
+// ✅ Cerrar sesión
+export const logout = () => {
+  localStorage.removeItem("user");
+  window.location.href = "/admin-login";
 };

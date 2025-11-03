@@ -22,32 +22,23 @@ const AdminLogin = () => {
     setError("");
 
     if (!username.trim() || !password.trim()) {
-      setError("Usuario y contraseña son requeridos");
+      setError("Completa todos los campos.");
       return;
     }
 
-    setLoading(true);
     try {
-      // 👇 Llamada real al backend
-      const response = await login({
-        nickname: username,
-        password: password,
-      });
+      const data = await login({ nickname: username, password });
 
-      // Si devuelve token o éxito
-      if (response.token) {
-        localStorage.setItem("token", response.token);
-        localStorage.setItem("adminSession", "true");
+      if (data.rol === "Administrador") {
         navigate("/admin/dashboard");
       } else {
-        setError(response.message || "Credenciales inválidas");
+        navigate("/login"); // o la ruta que tengas para usuarios normales
       }
-    } catch (err: any) {
-      setError(err.message || "Error de autenticación");
-    } finally {
-      setLoading(false);
+    } catch (error: any) {
+      setError(error.message || "Credenciales inválidas.");
     }
   };
+
   return (
     <div className="min-h-screen bg-gradient-surface flex items-center justify-center p-4">
       {/* Botón de accesibilidad */}

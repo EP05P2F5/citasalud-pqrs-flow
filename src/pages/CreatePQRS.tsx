@@ -20,11 +20,11 @@ const CreatePQRS: React.FC = () => {
 
   // Verificar sesión
   useEffect(() => {
-    const userSession = localStorage.getItem('userSession');
-    if (!userSession) {
-      navigate('/');
-    }
-  }, [navigate]);
+  const token = localStorage.getItem('authToken');
+  if (!token) {
+    navigate('/');
+  }
+}, [navigate]);
 
   const [formData, setFormData] = useState({
     type: "",

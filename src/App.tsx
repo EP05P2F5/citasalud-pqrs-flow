@@ -19,8 +19,11 @@ import AdminRespondPQRS from "./pages/AdminRespondPQRS";
 import AdminStatistics from "./pages/AdminStatistics";
 import AdminNotifications from "./pages/AdminNotifications";
 import AdminPQRSDetail from "./pages/AdminPQRSDetail";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Unauthorized from "./pages/Unauthorized";
 
 const queryClient = new QueryClient();
+
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -30,26 +33,91 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
+            {/* Rutas públicas */}
             <Route path="/" element={<Login />} />
             <Route path="/patient-login" element={<Login />} />
-            <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/pqrs/create" element={<CreatePQRS />} />
             <Route path="/pqrs/confirmation" element={<PQRSConfirmation />} />
             <Route path="/pqrs/manage" element={<ManagePQRS />} />
             <Route path="/pqrs/edit/:id" element={<EditPQRS />} />
+
+
             
-            {/* Rutas administrativas */}
+            <Route 
+              path="/dashboard" 
+              element={
+                <ProtectedRoute requiredRole="Usuario">
+                  <Dashboard />
+                </ProtectedRoute>
+                } 
+            />
+
+            {/* Login administrativo */}
             <Route path="/admin-login" element={<AdminLogin />} />
             <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard />} />
-            <Route path="/admin/manage-pqrs" element={<AdminManagePQRS />} />
-            <Route path="/admin/update-status/:id" element={<AdminUpdateStatus />} />
-            <Route path="/admin/respond/:id" element={<AdminRespondPQRS />} />
-            <Route path="/admin/statistics" element={<AdminStatistics />} />
-            <Route path="/admin/notifications" element={<AdminNotifications />} />
-            <Route path="/admin/pqrs-detail/:id" element={<AdminPQRSDetail />} />
-            
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+
+            {/* ✅ Rutas protegidas para rol Administrador */}
+            <Route
+              path="/admin/dashboard"
+              element={
+                <ProtectedRoute requiredRole="Administrador">
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/manage-pqrs"
+              element={
+                <ProtectedRoute requiredRole="Administrador">
+                  <AdminManagePQRS />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/update-status/:id"
+              element={
+                <ProtectedRoute requiredRole="Administrador">
+                  <AdminUpdateStatus />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/respond/:id"
+              element={
+                <ProtectedRoute requiredRole="Administrador">
+                  <AdminRespondPQRS />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/statistics"
+              element={
+                <ProtectedRoute requiredRole="Administrador">
+                  <AdminStatistics />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/notifications"
+              element={
+                <ProtectedRoute requiredRole="Administrador">
+                  <AdminNotifications />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/pqrs-detail/:id"
+              element={
+                <ProtectedRoute requiredRole="Administrador">
+                  <AdminPQRSDetail />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Página de acceso denegado */}
+            <Route path="/unauthorized" element={<Unauthorized />} />
+
+            {/* Catch-all */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
@@ -57,5 +125,4 @@ const App = () => (
     </ThemeProvider>
   </QueryClientProvider>
 );
-
 export default App;
