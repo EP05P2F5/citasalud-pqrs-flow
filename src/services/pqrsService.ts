@@ -9,15 +9,11 @@ const API_URL =
 // Tipos
 // ---------------------------
 export interface PQRSRequest {
-  usuarioId: number;
   tipoId: number;
   estadoId: number;
-  estadoTexto: string;
   descripcion: string;
   fechaDeGeneracion: string;
   radicado: string;
-  fechaDeRespuesta: string | null;
-  respuesta: string | null;
 }
 
 export interface PQRSResponse {
@@ -32,6 +28,27 @@ export interface UsuarioResponse {
   email: string;
   username: string;
   rol: string;
+}
+
+export interface PQRSItem {
+  idPqrs: number;
+  idUsuario: number;
+  descripcion: string;
+  fechaDeGeneracion: string;
+  radicado: string;
+  tipo: {
+    idTipo: number;
+    descripcion: string;
+  };
+  estado: {
+    idEstado: number;
+    descripcion: string;
+  };
+  fechaDeRespuesta: string | null;
+  respuesta: string | null;
+  // Campos planos opcionales (para compatibilidad)
+  idTipo?: number;
+  idEstado?: number;
 }
 
 // ---------------------------
@@ -111,19 +128,8 @@ export const crearPQRS = async (
   }
 };
 
-export interface PQRSItem {
-  idPqrs: number;
-  idUsuario: number;
-  idTipo: number;
-  descripcion: string;
-  fechaDeGeneracion: string;
-  radicado: string;
-  estado: string;
-  fechaDeRespuesta: string | null;
-  respuesta: string | null;
-}
 
-// 🔹 Obtener PQRS de un usuario
+// 🔹 Obtener PQRS de un usuario (adaptado al nuevo formato)
 export const getPQRSByUser = async (usuarioId: number): Promise<PQRSItem[]> => {
   try {
     const token = getAuthToken();
@@ -142,10 +148,27 @@ export const getPQRSByUser = async (usuarioId: number): Promise<PQRSItem[]> => {
       throw new Error(errorText || "Error al obtener las PQRS del usuario.");
     }
 
-    return await response.json();
+    const data = await response.json();
+
+    // 🔹 Normalizamos la estructura para que el front no se rompa
+    return data.map((item: any) => ({
+      idPqrs: item.idPqrs,
+      idUsuario: item.idUsuario,
+      descripcion: item.descripcion,
+      fechaDeGeneracion: item.fechaDeGeneracion,
+      radicado: item.radicado,
+      tipo: item.tipo,
+      estado: item.estado,
+      fechaDeRespuesta: item.fechaDeRespuesta,
+      respuesta: item.respuesta,
+      idTipo: item.tipo?.idTipo ?? item.idTipo,
+      idEstado: item.estado?.idEstado ?? item.idEstado,
+    }));
   } catch (error: any) {
     console.error("Error en getPQRSByUser:", error);
     throw new Error(error.message || "Error al obtener PQRS.");
   }
 };
+
+
 

@@ -1,7 +1,7 @@
+// src/components/layout/MedicalHeader.tsx
 import React from "react";
 import { Menu, Bell, User, LogOut, Stethoscope } from "lucide-react";
 import { MedicalButton } from "../ui/medical-button";
-import { MedicalCard } from "../ui/medical-card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,9 +10,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { Badge } from "../ui/badge";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useNavigate } from "react-router-dom";
+import { getCurrentUser } from "../../services/authService";
 
 interface MedicalHeaderProps {
   showSidebar?: boolean;
@@ -29,9 +29,18 @@ export const MedicalHeader: React.FC<MedicalHeaderProps> = ({
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem('userSession');
-    navigate('/');
+    localStorage.removeItem("userSession");
+    navigate("/");
   };
+
+  // 🔹 Obtener usuario actual
+  const currentUser = getCurrentUser();
+  const username = currentUser?.username || "Invitado";
+  const role = currentUser?.rol === "GESTOR"
+    ? "Gestor"
+    : currentUser?.rol === "USER"
+    ? "Paciente"
+    : "Desconocido";
 
   return (
     <header className="sticky top-0 z-50 bg-card border-b border-border shadow-sm">
@@ -50,7 +59,7 @@ export const MedicalHeader: React.FC<MedicalHeaderProps> = ({
                 <Menu className="h-5 w-5" />
               </MedicalButton>
             )}
-            
+
             <div className="flex items-center space-x-2">
               <div className="p-2 bg-gradient-primary rounded-lg">
                 <Stethoscope className="h-6 w-6 text-white" />
@@ -69,57 +78,47 @@ export const MedicalHeader: React.FC<MedicalHeaderProps> = ({
               variant="ghost"
               size="icon"
               onClick={toggleAccessibility}
-              aria-label={isAccessibilityMode ? "Desactivar modo accesibilidad" : "Activar modo accesibilidad"}
-              title={isAccessibilityMode ? "Modo Normal" : "Modo Accesibilidad"}
+              aria-label={
+                isAccessibilityMode
+                  ? "Desactivar modo accesibilidad"
+                  : "Activar modo accesibilidad"
+              }
+              title={
+                isAccessibilityMode
+                  ? "Modo Normal"
+                  : "Modo Accesibilidad"
+              }
               className={isAccessibilityMode ? "bg-primary/20" : ""}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
-                <circle cx="12" cy="12" r="3"/>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                <circle cx="12" cy="12" r="3" />
               </svg>
             </MedicalButton>
 
-            {/* Notificaciones */}
+            {/* Menú de usuario */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <MedicalButton variant="ghost" size="icon" className="relative">
-                  <Bell className="h-5 w-5" />
-                  <Badge 
-                    variant="destructive" 
-                    className="absolute -top-1 -right-1 h-5 w-5 p-0 text-xs flex items-center justify-center"
-                  >
-                    3
-                  </Badge>
-                  <span className="sr-only">Notificaciones</span>
-                </MedicalButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-80">
-                <DropdownMenuLabel>Notificaciones</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <div className="max-h-64 overflow-y-auto">
-                  <DropdownMenuItem className="p-3 cursor-pointer">
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium">PQRS #12345 actualizada</p>
-                      <p className="text-xs text-muted-foreground">
-                        Su petición ha sido revisada y está en proceso
-                      </p>
-                      <p className="text-xs text-muted-foreground">Hace 2 horas</p>
-                    </div>
-                  </DropdownMenuItem>
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
-
-            {/* Usuario */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <MedicalButton variant="ghost" className="flex items-center space-x-2 px-3">
+                <MedicalButton
+                  variant="ghost"
+                  className="flex items-center space-x-2 px-3"
+                >
                   <div className="w-8 h-8 bg-gradient-primary rounded-full flex items-center justify-center">
                     <User className="h-4 w-4 text-white" />
                   </div>
                   <div className="hidden md:block text-left">
-                    <p className="text-sm font-medium">Juan Pérez</p>
-                    <p className="text-xs text-muted-foreground">Paciente</p>
+                    <p className="text-sm font-medium">{username}</p>
+                    <p className="text-xs text-muted-foreground">{role}</p>
                   </div>
                 </MedicalButton>
               </DropdownMenuTrigger>
@@ -130,12 +129,8 @@ export const MedicalHeader: React.FC<MedicalHeaderProps> = ({
                   <User className="mr-2 h-4 w-4" />
                   Perfil
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Bell className="mr-2 h-4 w-4" />
-                  Notificaciones
-                </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   className="text-destructive focus:text-destructive"
                   onClick={handleLogout}
                 >

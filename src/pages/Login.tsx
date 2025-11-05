@@ -74,7 +74,7 @@ const Login: React.FC = () => {
         });
 
         // Redirigir según el rol
-        if (data.rol === "Usuario") {
+        if (data.rol === "USER") {
           navigate("/dashboard");
         } else {
           navigate("/login");

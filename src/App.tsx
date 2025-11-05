@@ -45,7 +45,7 @@ const App = () => (
             <Route 
               path="/dashboard" 
               element={
-                <ProtectedRoute requiredRole="Usuario">
+                <ProtectedRoute requiredRole="USER">
                   <Dashboard />
                 </ProtectedRoute>
                 } 
@@ -53,7 +53,7 @@ const App = () => (
             <Route 
               path="/pqrs/create"
               element={
-                <ProtectedRoute requiredRole="Usuario">
+                <ProtectedRoute requiredRole="USER">
                   <CreatePQRS />
                 </ProtectedRoute>
                 } 

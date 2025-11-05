@@ -1,4 +1,3 @@
-// src/pages/ManagePQRS.tsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -8,6 +7,8 @@ import {
   Calendar,
   MoreHorizontal,
   Eye,
+  CheckCircle,
+  Clock,
 } from "lucide-react";
 import { MedicalLayout } from "../components/layout/medical-layout";
 import {
@@ -42,6 +43,7 @@ import {
 } from "../components/ui/select";
 import { getPQRSByUser, getUsuarioByUsername } from "../services/pqrsService";
 import { getCurrentUser } from "../services/authService";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const ManagePQRS: React.FC = () => {
   const navigate = useNavigate();
@@ -64,6 +66,7 @@ const ManagePQRS: React.FC = () => {
 
         const usuario = await getUsuarioByUsername(currentUser.username);
         const data = await getPQRSByUser(usuario.idUsuario);
+
         setPqrsList(data);
       } catch (error) {
         console.error("Error al cargar PQRS:", error);
@@ -78,34 +81,35 @@ const ManagePQRS: React.FC = () => {
   // Filtros y conteos
   // -----------------------------
   const filteredPQRS = pqrsList.filter((pqrs) => {
+    const desc = pqrs.descripcion?.toLowerCase() || "";
+    const rad = pqrs.radicado?.toLowerCase() || "";
+    const estadoDesc = pqrs.estado?.descripcion || "";
+
     const matchesSearch =
-      pqrs.descripcion.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      pqrs.radicado.toLowerCase().includes(searchTerm.toLowerCase());
+      desc.includes(searchTerm.toLowerCase()) ||
+      rad.includes(searchTerm.toLowerCase());
     const matchesStatus =
-      statusFilter === "all" || pqrs.estado === statusFilter;
+      statusFilter === "all" || estadoDesc === statusFilter;
 
     return matchesSearch && matchesStatus;
   });
 
   // 🔹 Cálculo correcto de los totales
   const totalActivas = pqrsList.filter(
-    (p) => p.estado === "Pendiente" || p.estado === "En proceso"
+    (p) =>
+      p.estado?.descripcion === "Pendiente" ||
+      p.estado?.descripcion === "En proceso"
   ).length;
 
   const totalResueltas = pqrsList.filter(
-    (p) => p.estado === "Resuelta" || p.estado === "Cerrada"
+    (p) =>
+      p.estado?.descripcion === "Resuelta" ||
+      p.estado?.descripcion === "Cerrada"
   ).length;
 
-  const totalAnuladas = pqrsList.filter((p) => p.estado === "Anulada").length;
-
-  // 🔹 Mapeo de tipo de PQRS
-  const tipoPQRSMap: Record<number, string> = {
-    1: "Queja",
-    2: "Reclamo",
-    3: "Sugerencia",
-    4: "Petición",
-    5: "Felicitación",
-  };
+  const totalAnuladas = pqrsList.filter(
+    (p) => p.estado?.descripcion === "Anulada"
+  ).length;
 
   // 🔹 Color dinámico del estado
   const getEstadoColor = (estado: string): string => {
@@ -254,9 +258,11 @@ const ManagePQRS: React.FC = () => {
                           </h3>
                           <Badge
                             variant="outline"
-                            className={`text-xs font-medium ${getEstadoColor(pqrs.estado)}`}
+                            className={`text-xs font-medium ${getEstadoColor(
+                              pqrs.estado?.descripcion
+                            )}`}
                           >
-                            {pqrs.estado}
+                            {pqrs.estado?.descripcion}
                           </Badge>
                         </div>
 
@@ -268,7 +274,7 @@ const ManagePQRS: React.FC = () => {
                         <p className="text-sm font-medium text-foreground">
                           Tipo de PQRS:{" "}
                           <span className="text-muted-foreground">
-                            {tipoPQRSMap[pqrs.idTipo] || "Desconocido"}
+                            {pqrs.tipo?.descripcion || "Desconocido"}
                           </span>
                         </p>
                       </div>
@@ -303,22 +309,60 @@ const ManagePQRS: React.FC = () => {
                 Información completa de la solicitud seleccionada
               </DialogDescription>
             </DialogHeader>
+
             {selectedPQRS && (
               <div className="space-y-4">
-                <p><strong>Radicado:</strong> {selectedPQRS.radicado}</p>
-                <p><strong>Estado:</strong> {selectedPQRS.estado}</p>
-                <p><strong>Tipo:</strong> {tipoPQRSMap[selectedPQRS.idTipo] || "Desconocido"}</p>
-                <p><strong>Fecha de creación:</strong> {formatDate(selectedPQRS.fechaDeGeneracion)}</p>
-                <p><strong>Descripción:</strong> {selectedPQRS.descripcion}</p>
-                {selectedPQRS.respuesta && (
-                  <div className="p-4 bg-success/10 rounded-lg border border-success/20">
-                    <p className="text-sm font-medium text-success mb-2">
-                      Respuesta
-                    </p>
-                    <p className="text-sm leading-relaxed">
-                      {selectedPQRS.respuesta}
-                    </p>
-                  </div>
+                <p>
+                  <strong>Radicado:</strong> {selectedPQRS.radicado}
+                </p>
+                <p>
+                  <strong>Estado:</strong> {selectedPQRS.estado?.descripcion}
+                </p>
+                <p>
+                  <strong>Tipo:</strong> {selectedPQRS.tipo?.descripcion}
+                </p>
+                <p>
+                  <strong>Fecha de creación:</strong>{" "}
+                  {formatDate(selectedPQRS.fechaDeGeneracion)}
+                </p>
+                <p>
+                  <strong>Descripción:</strong> {selectedPQRS.descripcion}
+                </p>
+
+                {/* 🔹 Respuesta automática si existe */}
+                {selectedPQRS.respuesta ? (
+                  <Alert className="border-green-300 bg-green-50 text-green-800">
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <div className="ml-3 space-y-1">
+                      <AlertTitle className="font-semibold">
+                        PQRS Respondida
+                      </AlertTitle>
+                      <AlertDescription className="text-sm leading-relaxed">
+                        {selectedPQRS.respuesta}
+                      </AlertDescription>
+                      {selectedPQRS.fechaDeRespuesta && (
+                        <p className="text-xs text-green-700 mt-1">
+                          📅 Fecha de respuesta:{" "}
+                          {new Date(
+                            selectedPQRS.fechaDeRespuesta
+                          ).toLocaleString("es-CO")}
+                        </p>
+                      )}
+                    </div>
+                  </Alert>
+                ) : (
+                  <Alert className="border-yellow-300 bg-yellow-50 text-yellow-800">
+                    <Clock className="h-5 w-5 text-yellow-600" />
+                    <div className="ml-3 space-y-1">
+                      <AlertTitle className="font-semibold">
+                        Sin respuesta aún
+                      </AlertTitle>
+                      <AlertDescription className="text-sm leading-relaxed">
+                        Su PQRS está en revisión. Recibirá una notificación cuando sea
+                        atendida por el equipo correspondiente.
+                      </AlertDescription>
+                    </div>
+                  </Alert>
                 )}
               </div>
             )}

@@ -1,13 +1,7 @@
 // src/pages/CreatePQRS.tsx
-// 
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  FileText,
-  ArrowLeft,
-  CheckCircle,
-  AlertCircle,
-} from "lucide-react";
+import { FileText, ArrowLeft, AlertCircle } from "lucide-react";
 import { MedicalLayout } from "../components/layout/medical-layout";
 import { MedicalButton } from "../components/ui/medical-button";
 import {
@@ -19,13 +13,18 @@ import {
 } from "../components/ui/medical-card";
 import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
 import { Alert, AlertDescription } from "../components/ui/alert";
 import { useToast } from "../hooks/use-toast";
 import {
   crearPQRS,
   generarRadicado,
-  getUsuarioByUsername,
   PQRSRequest,
 } from "../services/pqrsService";
 
@@ -35,32 +34,13 @@ const CreatePQRS: React.FC = () => {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [usuarioId, setUsuarioId] = useState<number | null>(null);
   const [tipoId, setTipoId] = useState<number>(0);
   const [descripcion, setDescripcion] = useState<string>("");
   const [error, setError] = useState<string>("");
 
-  // 🔹 Verificar sesión y cargar usuario
   useEffect(() => {
     const session = localStorage.getItem("user");
-    if (!session) {
-      navigate("/");
-      return;
-    }
-
-    const user = JSON.parse(session);
-    const username = user?.username;
-
-    if (!username) {
-      setError("No se encontró el usuario actual.");
-      return;
-    }
-
-    getUsuarioByUsername(username)
-      .then((data) => setUsuarioId(data.idUsuario))
-      .catch(() =>
-        setError("Error al obtener la información del usuario desde el servidor.")
-      );
+    if (!session) navigate("/");
   }, [navigate]);
 
   const validateForm = () => {
@@ -75,23 +55,14 @@ const CreatePQRS: React.FC = () => {
     e.preventDefault();
     setError("");
 
-    if (!usuarioId) {
-      setError("No se pudo obtener el ID del usuario.");
-      return;
-    }
-
     if (!validateForm()) return;
 
     const pqrs: PQRSRequest = {
-      usuarioId,
       tipoId,
-      estadoId: 1,
-      estadoTexto: "Pendiente",
+      estadoId: 1, // "Pendiente" por defecto
       descripcion,
       fechaDeGeneracion: new Date().toISOString(),
       radicado: generarRadicado(),
-      fechaDeRespuesta: null,
-      respuesta: null,
     };
 
     try {
@@ -107,7 +78,8 @@ const CreatePQRS: React.FC = () => {
           <div className="space-y-1">
             <p>Su solicitud ha sido registrada exitosamente.</p>
             <p className="font-semibold text-foreground mt-1">
-              📄 Radicado: <span className="text-primary">{response.radicado}</span>
+              📄 Radicado:{" "}
+              <span className="text-primary">{response.radicado}</span>
             </p>
             <p className="text-sm text-muted-foreground">
               Conserve este número para consultar el estado de su PQRS.
@@ -120,7 +92,6 @@ const CreatePQRS: React.FC = () => {
       setDescripcion("");
       setTipoId(0);
 
-      // Redirige o muestra mensaje temporal
       setTimeout(() => navigate("/dashboard"), 2500);
     } catch (err: any) {
       setError(err.message || "Error al enviar la PQRS.");
@@ -179,7 +150,7 @@ const CreatePQRS: React.FC = () => {
 
           <MedicalCardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Tipo de PQRS */}
+              {/* Tipo */}
               <div className="space-y-2">
                 <Label htmlFor="tipoId">Tipo de PQRS *</Label>
                 <Select
