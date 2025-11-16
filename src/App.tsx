@@ -19,6 +19,9 @@ import AdminRespondPQRS from "./pages/AdminRespondPQRS";
 import AdminStatistics from "./pages/AdminStatistics";
 import AdminNotifications from "./pages/AdminNotifications";
 import AdminPQRSDetail from "./pages/AdminPQRSDetail";
+import AdminManageGestores from "./pages/AdminManageGestores";
+import AdminCreateGestor from "./pages/AdminCreateGestor";
+import AdminEditGestor from "./pages/AdminEditGestor";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./pages/Unauthorized";
 
@@ -117,6 +120,30 @@ const App = () => (
               element={
                 <ProtectedRoute requiredRole="Administrador">
                   <AdminPQRSDetail />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/gestores"
+              element={
+                <ProtectedRoute requiredRole="Administrador">
+                  <AdminManageGestores />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/gestores/create"
+              element={
+                <ProtectedRoute requiredRole="Administrador">
+                  <AdminCreateGestor />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin/gestores/edit/:id"
+              element={
+                <ProtectedRoute requiredRole="Administrador">
+                  <AdminEditGestor />
                 </ProtectedRoute>
               }
             />

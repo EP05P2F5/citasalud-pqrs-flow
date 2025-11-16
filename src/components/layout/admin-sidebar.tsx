@@ -6,7 +6,8 @@ import {
   FileText, 
   Bell,
   BarChart3,
-  User, 
+  User,
+  Users, 
   Settings, 
   MessageSquare,
   Info,
@@ -45,6 +46,12 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       href: "/admin/manage-pqrs",
       icon: FileText,
       label: "PQRS",
+      isActive: true,
+    },
+    {
+      href: "/admin/gestores",
+      icon: Users,
+      label: "Gestores",
       isActive: true,
     },
     {
