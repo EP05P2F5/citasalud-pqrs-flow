@@ -26,16 +26,20 @@ const AdminLogin = () => {
       return;
     }
 
+    setLoading(true);
+    
     try {
       const data = await login({ nickname: username, password });
 
       if (data.rol === "Administrador") {
         navigate("/admin/dashboard");
       } else {
-        navigate("/login"); // o la ruta que tengas para usuarios normales
+        setError("Acceso denegado. Solo administradores pueden ingresar.");
       }
     } catch (error: any) {
       setError(error.message || "Credenciales inválidas.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -138,8 +142,9 @@ const AdminLogin = () => {
               variant="medical"
               size="lg"
               className="w-full"
+              disabled={loading}
             >
-              Iniciar Sesión Administrativa
+              {loading ? "Iniciando sesión..." : "Iniciar Sesión Administrativa"}
             </MedicalButton>
 
             {/* Información de prueba */}

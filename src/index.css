@@ -176,60 +176,91 @@ Colores HSL optimizados para accesibilidad y confianza médica
   }
 
   /* Modo de accesibilidad - elegante con alto contraste */
+  /* Modo de accesibilidad - Alto contraste con fondo negro puro */
   .accessibility-mode {
-    font-size: 118% !important; /* Incrementa tamaño base 15-20% */
+    font-size: 125% !important; /* Incrementa tamaño base 25% */
     
-    /* Modo oscuro elegante con alto contraste */
-    --background: 0 0% 8%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 12%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 12%;
-    --popover-foreground: 0 0% 98%;
+    /* Fondo negro puro y texto blanco puro */
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 5%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 5%;
+    --popover-foreground: 0 0% 100%;
     
-    /* Colores primarios con contraste resaltado */
-    --primary: 210 100% 65%;
+    /* Colores primarios brillantes accesibles */
+    --primary: 210 100% 60%;
     --primary-foreground: 0 0% 100%;
     --primary-hover: 210 100% 70%;
     
-    /* Colores secundarios médicos resaltados */
-    --secondary: 146 70% 55%;
+    /* Colores secundarios brillantes */
+    --secondary: 146 80% 55%;
     --secondary-foreground: 0 0% 100%;
-    --secondary-hover: 146 70% 60%;
+    --secondary-hover: 146 80% 65%;
     
-    /* Elementos de apoyo con contraste */
-    --muted: 0 0% 18%;
-    --muted-foreground: 0 0% 85%;
-    --accent: 195 80% 30%;
-    --accent-foreground: 0 0% 98%;
+    /* Elementos de apoyo con bordes grises claros */
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 90%;
+    --accent: 195 100% 45%;
+    --accent-foreground: 0 0% 100%;
     
-    /* Estados con colores contrastantes */
-    --destructive: 0 85% 60%;
+    /* Estados con colores brillantes */
+    --destructive: 0 90% 65%;
     --destructive-foreground: 0 0% 100%;
-    --success: 146 75% 50%;
+    --success: 146 85% 55%;
     --success-foreground: 0 0% 100%;
-    --warning: 38 95% 55%;
-    --warning-foreground: 0 0% 100%;
+    --warning: 45 100% 55%;
+    --warning-foreground: 0 0% 0%;
     
-    /* Bordes y elementos interactivos sutiles */
-    --border: 0 0% 25%;
-    --input: 0 0% 25%;
-    --ring: 210 100% 65%;
+    /* Bordes grises claros visibles */
+    --border: 0 0% 67%;
+    --input: 0 0% 67%;
+    --ring: 210 100% 70%;
     
     /* Sidebar en modo accesible */
-    --sidebar-background: 0 0% 10%;
-    --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 210 100% 65%;
+    --sidebar-background: 0 0% 0%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 210 100% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 15%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 0 0% 20%;
-    --sidebar-ring: 210 100% 65%;
+    --sidebar-accent: 0 0% 10%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 67%;
+    --sidebar-ring: 210 100% 70%;
   }
 
-  /* Focus indicator suave pero visible */
+  /* Bordes visibles en todos los contenedores */
+  .accessibility-mode .bg-card,
+  .accessibility-mode [class*="border"],
+  .accessibility-mode .rounded,
+  .accessibility-mode table,
+  .accessibility-mode tr,
+  .accessibility-mode td,
+  .accessibility-mode th {
+    border-color: hsl(0 0% 67%) !important;
+    border-width: 1px !important;
+  }
+
+  /* Asegurar bordes en tablas */
+  .accessibility-mode table {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+  }
+
+  .accessibility-mode td,
+  .accessibility-mode th {
+    border: 1px solid hsl(0 0% 67%) !important;
+  }
+
+  /* Focus indicator visible */
   .accessibility-mode :focus-visible {
-    outline: 3px solid hsl(var(--primary));
+    outline: 3px solid hsl(var(--primary)) !important;
     outline-offset: 2px;
+  }
+
+  /* Botón de accesibilidad activo con borde resaltado */
+  .accessibility-mode [aria-label*="Desactivar modo accesibilidad"],
+  .accessibility-mode [title*="Modo Normal"] {
+    border: 2px solid hsl(0 0% 100%) !important;
+    background: hsl(0 0% 20%) !important;
   }
 }
