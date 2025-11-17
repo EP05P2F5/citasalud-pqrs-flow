@@ -42,7 +42,7 @@ const AdminDashboard = () => {
             Panel Administrativo
           </h1>
           <p className="text-muted-foreground">
-            Bienvenido al sistema de gestión PQRS de CITASalud
+            Bienvenido al sistema de gestión de CITASalud
           </p>
         </div>
 
