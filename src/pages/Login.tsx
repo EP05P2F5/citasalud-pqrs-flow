@@ -60,27 +60,20 @@ const Login: React.FC = () => {
         password: formData.password,
       });
 
-      if (data.token) {
-        // Guardar el token y rol
-        localStorage.setItem("authToken", data.token);
-        if (data.rol) {
-          localStorage.setItem("userRole", data.rol);
-        }
+      // authService ya guardó todo en localStorage
+      toast({
+        title: "Acceso autorizado",
+        description: "Bienvenido al sistema PQRS de CITASalud",
+        variant: "default",
+      });
 
-        toast({
-          title: "Acceso autorizado",
-          description: "Bienvenido al sistema PQRS de CITASalud",
-          variant: "default",
-        });
-
-        // Redirigir según el rol
-        if (data.rol === "USER") {
-          navigate("/dashboard");
-        } else {
-          navigate("/login");
-        }
+      // Redirigir según el rol
+      if (data.rol === "USER") {
+        navigate("/dashboard");
+      } else if (data.rol === "Administrador") {
+        navigate("/admin/dashboard");
       } else {
-        setError("Credenciales inválidas.");
+        setError("Rol no reconocido.");
       }
     } catch (err: any) {
       setError(err.message || "Error de conexión con el servidor.");

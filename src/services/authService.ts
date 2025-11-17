@@ -31,7 +31,7 @@ const MOCK_USERS = {
   },
   usuario: {
     nickname: "usuario",
-    password: "usuario123",
+    password: "123456",
     rol: "USER",
     email: "usuario@citasalud.com",
     username: "Usuario Paciente"
@@ -72,8 +72,10 @@ export const login = async (credentials: LoginRequest): Promise<LoginResponse> =
 
     const data: LoginResponse = await response.json();
 
-    // ✅ Guardar sesión
+    // ✅ Guardar sesión completa
     localStorage.setItem("user", JSON.stringify(data));
+    localStorage.setItem("authToken", data.token);
+    localStorage.setItem("userRole", data.rol);
 
     return data;
   } catch (error: any) {
@@ -83,6 +85,8 @@ export const login = async (credentials: LoginRequest): Promise<LoginResponse> =
     try {
       const mockData = mockLogin(credentials);
       localStorage.setItem("user", JSON.stringify(mockData));
+      localStorage.setItem("authToken", mockData.token);
+      localStorage.setItem("userRole", mockData.rol);
       return mockData;
     } catch (mockError: any) {
       throw new Error(mockError.message || "Credenciales inválidas");
@@ -105,5 +109,7 @@ export const getAuthToken = () => {
 // ✅ Cerrar sesión
 export const logout = () => {
   localStorage.removeItem("user");
-  window.location.href = "/admin-login";
+  localStorage.removeItem("authToken");
+  localStorage.removeItem("userRole");
+  window.location.href = "/patient-login";
 };
