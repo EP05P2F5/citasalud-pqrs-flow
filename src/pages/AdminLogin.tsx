@@ -31,9 +31,14 @@ const AdminLogin = () => {
     try {
       const data = await login({ nickname: username, password });
 
+      // authService ya guardó todo en localStorage
       if (data.rol === "Administrador") {
         navigate("/admin/dashboard");
       } else {
+        // Si no es admin, limpiar localStorage y mostrar error
+        localStorage.removeItem("user");
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("userRole");
         setError("Acceso denegado. Solo administradores pueden ingresar.");
       }
     } catch (error: any) {

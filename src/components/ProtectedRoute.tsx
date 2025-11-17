@@ -11,16 +11,19 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ requiredRole, children 
   const role = localStorage.getItem("userRole");
 
   if (!token) {
-    // ❌ Sin token → al login
+    // Sin token → redirigir según el rol requerido
+    if (requiredRole === "Administrador") {
+      return <Navigate to="/admin-login" replace />;
+    }
     return <Navigate to="/patient-login" replace />;
   }
 
   if (requiredRole && role !== requiredRole) {
-    // ❌ Rol incorrecto → sin acceso
+    // Rol incorrecto → sin acceso
     return <Navigate to="/unauthorized" replace />;
   }
 
-  // ✅ Todo correcto
+  // Todo correcto
   return <>{children}</>;
 };
 
