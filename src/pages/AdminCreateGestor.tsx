@@ -44,7 +44,25 @@ const AdminCreateGestor: React.FC = () => {
       return;
     }
 
-    // Simulación de guardado
+    // Obtener gestores del localStorage
+    const stored = localStorage.getItem('gestores');
+    const gestores = stored ? JSON.parse(stored) : [];
+    
+    // Crear nuevo gestor
+    const newGestor = {
+      id: gestores.length > 0 ? Math.max(...gestores.map((g: any) => g.id)) + 1 : 1,
+      nombre: formData.nombre,
+      tipoIdentificacion: formData.tipoIdentificacion,
+      numeroDocumento: formData.numeroDocumento,
+      correo: formData.correo,
+      estado: formData.estado,
+      fechaRegistro: new Date().toISOString().split("T")[0],
+    };
+    
+    // Agregar y guardar
+    gestores.push(newGestor);
+    localStorage.setItem('gestores', JSON.stringify(gestores));
+    
     toast({
       title: "Gestor registrado",
       description: `El gestor ${formData.nombre} ha sido registrado exitosamente.`,
@@ -52,7 +70,7 @@ const AdminCreateGestor: React.FC = () => {
 
     setTimeout(() => {
       navigate("/admin/gestores");
-    }, 1500);
+    }, 1000);
   };
 
   return (

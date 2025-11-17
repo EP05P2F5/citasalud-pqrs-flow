@@ -12,7 +12,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const saved = localStorage.getItem('theme');
-    return saved === 'dark';
+    return saved === 'dark' ? true : false; // Default to light mode
   });
 
   const [isAccessibilityMode, setIsAccessibilityMode] = useState(() => {

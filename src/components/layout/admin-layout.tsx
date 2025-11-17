@@ -36,8 +36,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
         
         <main 
           className={cn(
-            "flex-1 transition-all duration-300 ease-in-out",
-            showSidebar && sidebarOpen && "lg:ml-64",
+            "flex-1 w-full",
             className
           )}
         >
