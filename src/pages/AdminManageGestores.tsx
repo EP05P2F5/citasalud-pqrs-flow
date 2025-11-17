@@ -39,36 +39,51 @@ const AdminManageGestores: React.FC = () => {
   const { toast } = useToast();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [gestorToDelete, setGestorToDelete] = useState<Gestor | null>(null);
-  const [gestores, setGestores] = useState<Gestor[]>([
-    {
-      id: 1,
-      nombre: "Carlos Andrés Gómez",
-      tipoIdentificacion: "Cédula de Ciudadanía",
-      numeroDocumento: "1023456789",
-      correo: "carlos.gomez@citasalud.com",
-      estado: "Activo",
-      fechaRegistro: "2024-01-15",
-    },
-    {
-      id: 2,
-      nombre: "María Fernanda López",
-      tipoIdentificacion: "Cédula de Ciudadanía",
-      numeroDocumento: "1034567890",
-      correo: "maria.lopez@citasalud.com",
-      estado: "Activo",
-      fechaRegistro: "2024-02-20",
-    },
-    {
-      id: 3,
-      nombre: "Juan Pablo Martínez",
-      tipoIdentificacion: "Cédula de Ciudadanía",
-      numeroDocumento: "1045678901",
-      correo: "juan.martinez@citasalud.com",
-      estado: "Inactivo",
-      fechaRegistro: "2024-03-10",
-      fechaModificacion: "2024-11-15",
-    },
-  ]);
+  
+  // Cargar gestores desde localStorage o usar datos iniciales
+  const [gestores, setGestores] = useState<Gestor[]>(() => {
+    const stored = localStorage.getItem('gestores');
+    if (stored) {
+      return JSON.parse(stored);
+    }
+    const initialGestores = [
+      {
+        id: 1,
+        nombre: "Carlos Andrés Gómez",
+        tipoIdentificacion: "Cédula de Ciudadanía",
+        numeroDocumento: "1023456789",
+        correo: "carlos.gomez@citasalud.com",
+        estado: "Activo",
+        fechaRegistro: "2024-01-15",
+      },
+      {
+        id: 2,
+        nombre: "María Fernanda López",
+        tipoIdentificacion: "Cédula de Ciudadanía",
+        numeroDocumento: "1034567890",
+        correo: "maria.lopez@citasalud.com",
+        estado: "Activo",
+        fechaRegistro: "2024-02-20",
+      },
+      {
+        id: 3,
+        nombre: "Juan Pablo Martínez",
+        tipoIdentificacion: "Cédula de Ciudadanía",
+        numeroDocumento: "1045678901",
+        correo: "juan.martinez@citasalud.com",
+        estado: "Inactivo",
+        fechaRegistro: "2024-03-10",
+        fechaModificacion: "2024-11-15",
+      },
+    ];
+    localStorage.setItem('gestores', JSON.stringify(initialGestores));
+    return initialGestores;
+  });
+
+  // Guardar en localStorage cada vez que cambian los gestores
+  React.useEffect(() => {
+    localStorage.setItem('gestores', JSON.stringify(gestores));
+  }, [gestores]);
 
   const handleDelete = (gestor: Gestor) => {
     setGestorToDelete(gestor);
@@ -79,13 +94,13 @@ const AdminManageGestores: React.FC = () => {
       setGestores((prev) =>
         prev.map((g) =>
           g.id === gestorToDelete.id
-            ? { ...g, estado: "Eliminado", fechaModificacion: new Date().toISOString().split("T")[0] }
+            ? { ...g, estado: "Inactivo", fechaModificacion: new Date().toISOString().split("T")[0] }
             : g
         )
       );
       toast({
         title: "Gestor eliminado",
-        description: `El gestor ${gestorToDelete.nombre} ha sido marcado como eliminado.`,
+        description: `El gestor ${gestorToDelete.nombre} ha sido marcado como inactivo.`,
       });
       setGestorToDelete(null);
     }
@@ -131,7 +146,7 @@ const AdminManageGestores: React.FC = () => {
             </TableHeader>
             <TableBody>
               {gestores
-                .filter((g) => g.estado !== "Eliminado")
+                .filter((g) => g.estado !== "Inactivo")
                 .map((gestor) => (
                   <TableRow key={gestor.id}>
                     <TableCell className="font-medium">{gestor.nombre}</TableCell>

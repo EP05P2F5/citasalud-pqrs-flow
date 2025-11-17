@@ -21,14 +21,31 @@ const AdminEditGestor: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Simulación de datos cargados
-  const [formData, setFormData] = useState({
-    nombre: "Carlos Andrés Gómez",
-    tipoIdentificacion: "Cédula de Ciudadanía",
-    numeroDocumento: "1023456789",
-    correo: "carlos.gomez@citasalud.com",
-    estado: "Activo",
-    contrasena: "",
+  // Cargar datos del gestor desde localStorage
+  const [formData, setFormData] = useState(() => {
+    const stored = localStorage.getItem('gestores');
+    if (stored && id) {
+      const gestores = JSON.parse(stored);
+      const gestor = gestores.find((g: any) => g.id === parseInt(id));
+      if (gestor) {
+        return {
+          nombre: gestor.nombre,
+          tipoIdentificacion: gestor.tipoIdentificacion,
+          numeroDocumento: gestor.numeroDocumento,
+          correo: gestor.correo,
+          estado: gestor.estado,
+          contrasena: "",
+        };
+      }
+    }
+    return {
+      nombre: "",
+      tipoIdentificacion: "Cédula de Ciudadanía",
+      numeroDocumento: "",
+      correo: "",
+      estado: "Activo",
+      contrasena: "",
+    };
   });
 
   const handleChange = (field: string, value: string) => {
@@ -47,7 +64,23 @@ const AdminEditGestor: React.FC = () => {
       return;
     }
 
-    // Simulación de actualización
+    // Actualizar gestor en localStorage
+    const stored = localStorage.getItem('gestores');
+    if (stored && id) {
+      const gestores = JSON.parse(stored);
+      const index = gestores.findIndex((g: any) => g.id === parseInt(id));
+      if (index !== -1) {
+        gestores[index] = {
+          ...gestores[index],
+          nombre: formData.nombre,
+          correo: formData.correo,
+          estado: formData.estado,
+          fechaModificacion: new Date().toISOString().split("T")[0],
+        };
+        localStorage.setItem('gestores', JSON.stringify(gestores));
+      }
+    }
+
     const currentDate = new Date().toISOString().split("T")[0];
     const currentUser = localStorage.getItem("username") || "Administrador";
 
@@ -58,7 +91,7 @@ const AdminEditGestor: React.FC = () => {
 
     setTimeout(() => {
       navigate("/admin/gestores");
-    }, 1500);
+    }, 1000);
   };
 
   return (
