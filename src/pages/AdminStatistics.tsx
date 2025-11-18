@@ -71,13 +71,6 @@ const AdminStatistics = () => {
   const [filteredData, setFilteredData] = useState(allPQRSData);
   const [showNoResults, setShowNoResults] = useState(false);
 
-  useEffect(() => {
-    const adminSession = localStorage.getItem('adminSession');
-    if (!adminSession) {
-      navigate('/admin-login');
-    }
-  }, [navigate]);
-
   const applyFilters = () => {
     let filtered = allPQRSData;
 
