@@ -32,7 +32,7 @@ const AdminLogin = () => {
       const data = await login({ nickname: username, password });
 
       // authService ya guardó todo en localStorage
-      if (data.rol === "Administrador") {
+      if (data.rol === "ADMIN") {
         navigate("/admin/dashboard");
       } else {
         // Si no es admin, limpiar localStorage y mostrar error
