@@ -21,7 +21,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   const location = useLocation();
   const navigate = useNavigate();
   const navItems: NavItem[] = [{
-    href: "/admin/dashboard",
+    href: "/admin",
     icon: Home,
     label: "Inicio",
     isActive: true
