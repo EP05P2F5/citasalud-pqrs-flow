@@ -33,7 +33,7 @@ const AdminLogin = () => {
 
       // authService ya guardó todo en localStorage
       if (data.rol === "Administrador") {
-        navigate("/admin");
+        navigate("/admin/dashboard");
       } else {
         // Si no es admin, limpiar localStorage y mostrar error
         localStorage.removeItem("user");

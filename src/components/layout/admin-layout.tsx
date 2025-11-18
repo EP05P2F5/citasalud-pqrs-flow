@@ -36,7 +36,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
         
         <main 
           className={cn(
-            "flex-1 w-full min-w-0",
+            "flex-1 w-full",
             className
           )}
         >
