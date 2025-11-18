@@ -24,6 +24,8 @@ import AdminCreateGestor from "./pages/AdminCreateGestor";
 import AdminEditGestor from "./pages/AdminEditGestor";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./pages/Unauthorized";
+import { AdminLayoutWrapper } from "./components/layout/AdminLayoutWrapper";
+import Index from "./pages/Index";
 
 const queryClient = new QueryClient();
 
@@ -37,7 +39,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             {/* Rutas públicas */}
-            <Route path="/" element={<Login />} />
+            <Route path="/" element={<Index />} />
             <Route path="/patient-login" element={<Login />} />
             <Route path="/pqrs/confirmation" element={<PQRSConfirmation />} />
             <Route path="/pqrs/manage" element={<ManagePQRS />} />
@@ -66,87 +68,20 @@ const App = () => (
             <Route path="/admin-login" element={<AdminLogin />} />
             <Route path="/admin/login" element={<AdminLogin />} />
 
-            {/* ✅ Rutas protegidas para rol Administrador */}
-            <Route
-              path="/admin/dashboard"
-              element={
-                <ProtectedRoute requiredRole="Administrador">
-                  <AdminDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/manage-pqrs"
-              element={
-                <ProtectedRoute requiredRole="Administrador">
-                  <AdminManagePQRS />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/update-status/:id"
-              element={
-                <ProtectedRoute requiredRole="Administrador">
-                  <AdminUpdateStatus />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/respond/:id"
-              element={
-                <ProtectedRoute requiredRole="Administrador">
-                  <AdminRespondPQRS />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/statistics"
-              element={
-                <ProtectedRoute requiredRole="Administrador">
-                  <AdminStatistics />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/notifications"
-              element={
-                <ProtectedRoute requiredRole="Administrador">
-                  <AdminNotifications />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/pqrs-detail/:id"
-              element={
-                <ProtectedRoute requiredRole="Administrador">
-                  <AdminPQRSDetail />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/gestores"
-              element={
-                <ProtectedRoute requiredRole="Administrador">
-                  <AdminManageGestores />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/gestores/create"
-              element={
-                <ProtectedRoute requiredRole="Administrador">
-                  <AdminCreateGestor />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/gestores/edit/:id"
-              element={
-                <ProtectedRoute requiredRole="Administrador">
-                  <AdminEditGestor />
-                </ProtectedRoute>
-              }
-            />
+            {/* ✅ Rutas protegidas anidadas para rol Administrador */}
+            <Route path="/admin" element={<AdminLayoutWrapper />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="manage-pqrs" element={<AdminManagePQRS />} />
+              <Route path="update-status/:id" element={<AdminUpdateStatus />} />
+              <Route path="respond/:id" element={<AdminRespondPQRS />} />
+              <Route path="statistics" element={<AdminStatistics />} />
+              <Route path="notifications" element={<AdminNotifications />} />
+              <Route path="pqrs-detail/:id" element={<AdminPQRSDetail />} />
+              <Route path="gestores" element={<AdminManageGestores />} />
+              <Route path="gestores/create" element={<AdminCreateGestor />} />
+              <Route path="gestores/edit/:id" element={<AdminEditGestor />} />
+            </Route>
 
             {/* Página de acceso denegado */}
             <Route path="/unauthorized" element={<Unauthorized />} />
