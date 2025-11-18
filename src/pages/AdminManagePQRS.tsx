@@ -19,13 +19,6 @@ const AdminManagePQRS = () => {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  useEffect(() => {
-    const adminSession = localStorage.getItem('adminSession');
-    if (!adminSession) {
-      navigate('/admin/login');
-    }
-  }, [navigate]);
-
   // Datos de ejemplo
   const pqrsData: PQRS[] = [
     { id: 'PQRS-001', usuario: 'Juan Pérez', tipo: 'Petición', estado: 'Recibida', fecha: '2025-01-15' },
