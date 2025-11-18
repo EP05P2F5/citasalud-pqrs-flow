@@ -112,7 +112,7 @@ const AdminManageGestores: React.FC = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {gestores.filter(g => g.estado !== "Inactivo").map(gestor => <TableRow key={gestor.id}>
+              {gestores.map(gestor => <TableRow key={gestor.id}>
                     <TableCell className="font-medium">{gestor.nombre}</TableCell>
                     <TableCell>{gestor.tipoIdentificacion}</TableCell>
                     <TableCell>{gestor.numeroDocumento}</TableCell>
