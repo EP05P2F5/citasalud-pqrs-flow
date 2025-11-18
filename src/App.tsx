@@ -70,7 +70,7 @@ const App = () => (
             <Route
               path="/admin/dashboard"
               element={
-                <ProtectedRoute requiredRole="Administrador">
+                <ProtectedRoute requiredRole="ADMIN">
                   <AdminDashboard />
                 </ProtectedRoute>
               }
@@ -78,7 +78,7 @@ const App = () => (
             <Route
               path="/admin/manage-pqrs"
               element={
-                <ProtectedRoute requiredRole="Administrador">
+                <ProtectedRoute requiredRole="ADMIN">
                   <AdminManagePQRS />
                 </ProtectedRoute>
               }
@@ -86,7 +86,7 @@ const App = () => (
             <Route
               path="/admin/update-status/:id"
               element={
-                <ProtectedRoute requiredRole="Administrador">
+                <ProtectedRoute requiredRole="ADMIN">
                   <AdminUpdateStatus />
                 </ProtectedRoute>
               }
@@ -94,7 +94,7 @@ const App = () => (
             <Route
               path="/admin/respond/:id"
               element={
-                <ProtectedRoute requiredRole="Administrador">
+                <ProtectedRoute requiredRole="ADMIN">
                   <AdminRespondPQRS />
                 </ProtectedRoute>
               }
@@ -102,7 +102,7 @@ const App = () => (
             <Route
               path="/admin/statistics"
               element={
-                <ProtectedRoute requiredRole="Administrador">
+                <ProtectedRoute requiredRole="ADMIN">
                   <AdminStatistics />
                 </ProtectedRoute>
               }
@@ -110,7 +110,7 @@ const App = () => (
             <Route
               path="/admin/notifications"
               element={
-                <ProtectedRoute requiredRole="Administrador">
+                <ProtectedRoute requiredRole="ADMIN">
                   <AdminNotifications />
                 </ProtectedRoute>
               }
@@ -118,7 +118,7 @@ const App = () => (
             <Route
               path="/admin/pqrs-detail/:id"
               element={
-                <ProtectedRoute requiredRole="Administrador">
+                <ProtectedRoute requiredRole="ADMIN">
                   <AdminPQRSDetail />
                 </ProtectedRoute>
               }
@@ -126,7 +126,7 @@ const App = () => (
             <Route
               path="/admin/gestores"
               element={
-                <ProtectedRoute requiredRole="Administrador">
+                <ProtectedRoute requiredRole="ADMIN">
                   <AdminManageGestores />
                 </ProtectedRoute>
               }
@@ -134,7 +134,7 @@ const App = () => (
             <Route
               path="/admin/gestores/create"
               element={
-                <ProtectedRoute requiredRole="Administrador">
+                <ProtectedRoute requiredRole="ADMIN">
                   <AdminCreateGestor />
                 </ProtectedRoute>
               }
@@ -142,7 +142,7 @@ const App = () => (
             <Route
               path="/admin/gestores/edit/:id"
               element={
-                <ProtectedRoute requiredRole="Administrador">
+                <ProtectedRoute requiredRole="ADMIN">
                   <AdminEditGestor />
                 </ProtectedRoute>
               }
