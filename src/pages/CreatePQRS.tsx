@@ -57,32 +57,61 @@ const CreatePQRS: React.FC = () => {
 
     if (!validateForm()) return;
 
+    const radicado = generarRadicado();
+    const fechaDeGeneracion = new Date().toISOString();
+    
     const pqrs: PQRSRequest = {
       tipoId,
-      estadoId: 1, // "Pendiente" por defecto
+      estadoId: 1, // "Radicada" por defecto
       descripcion,
-      fechaDeGeneracion: new Date().toISOString(),
-      radicado: generarRadicado(),
+      fechaDeGeneracion,
+      radicado,
     };
 
     try {
       setIsLoading(true);
       const session = localStorage.getItem("user");
       const token = session ? JSON.parse(session).token : "";
+      const userId = session ? JSON.parse(session).id : "";
 
-      const response = await crearPQRS(pqrs, token);
+      // Intentar crear en el backend
+      try {
+        await crearPQRS(pqrs, token);
+      } catch (backendError) {
+        console.log("Backend no disponible, guardando localmente");
+      }
+
+      // Guardar en localStorage independientemente del backend
+      const existingPQRS = localStorage.getItem("userPQRS");
+      const pqrsList = existingPQRS ? JSON.parse(existingPQRS) : [];
+      
+      const newPQRS = {
+        id: pqrsList.length + 1,
+        radicado,
+        tipo: tipos.find(t => t.id === tipoId)?.label || "Desconocido",
+        estado: "Radicada",
+        fechaCreacion: fechaDeGeneracion,
+        descripcion,
+        usuarioId: userId,
+      };
+      
+      pqrsList.push(newPQRS);
+      localStorage.setItem("userPQRS", JSON.stringify(pqrsList));
 
       toast({
-        title: "✅ PQRS enviada correctamente",
+        title: "✅ PQRS radicada correctamente",
         description: (
           <div className="space-y-1">
             <p>Su solicitud ha sido registrada exitosamente.</p>
             <p className="font-semibold text-foreground mt-1">
               📄 Radicado:{" "}
-              <span className="text-primary">{response.radicado}</span>
+              <span className="text-primary">{radicado}</span>
             </p>
             <p className="text-sm text-muted-foreground">
-              Conserve este número para consultar el estado de su PQRS.
+              Estado: <span className="text-success">Radicada</span>
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Fecha: {new Date(fechaDeGeneracion).toLocaleDateString("es-CO")}
             </p>
           </div>
         ),
@@ -94,7 +123,7 @@ const CreatePQRS: React.FC = () => {
 
       setTimeout(() => navigate("/dashboard"), 2500);
     } catch (err: any) {
-      setError(err.message || "Error al enviar la PQRS.");
+      setError(err.message || "Error al radicar la PQRS.");
     } finally {
       setIsLoading(false);
     }
@@ -129,7 +158,7 @@ const CreatePQRS: React.FC = () => {
 
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">
-            Registrar PQRS
+            Radicar PQRS
           </h1>
           <p className="text-muted-foreground">
             Diligencie la información para radicar su petición, queja, reclamo o sugerencia.
@@ -198,7 +227,7 @@ const CreatePQRS: React.FC = () => {
                   disabled={isLoading}
                   className="flex-1"
                 >
-                  {isLoading ? "Enviando..." : "Enviar PQRS"}
+                  {isLoading ? "Radicando..." : "Radicar PQRS"}
                 </MedicalButton>
 
                 <MedicalButton

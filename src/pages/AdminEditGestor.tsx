@@ -76,6 +76,8 @@ const AdminEditGestor: React.FC = () => {
           correo: formData.correo,
           estado: formData.estado,
           fechaModificacion: new Date().toISOString().split("T")[0],
+          ultima_modificacion: new Date().toISOString(),
+          modificado_por: "admin",
         };
         localStorage.setItem('gestores', JSON.stringify(gestores));
       }
