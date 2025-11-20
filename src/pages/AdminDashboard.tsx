@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminLayout } from '@/components/layout/admin-layout';
 import { MedicalCard, MedicalCardContent, MedicalCardDescription, MedicalCardHeader, MedicalCardTitle } from '@/components/ui/medical-card';
-import { FileText, Bell, BarChart3, ArrowRight, Users } from 'lucide-react';
+import { BarChart3, ArrowRight, Users } from 'lucide-react';
 import { MedicalButton } from '@/components/ui/medical-button';
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -14,19 +14,12 @@ const AdminDashboard = () => {
     }
   }, [navigate]);
   const cards = [{
-    title: "Gestionar PQRS",
-    description: "Administra y responde todas las solicitudes de PQRS registradas en el sistema",
-    icon: FileText,
-    path: "/admin/manage-pqrs",
-    color: "text-primary",
-    bgColor: "bg-primary/10"
-  }, {
     title: "Gestores PQRS",
     description: "Administra los gestores del sistema PQRS",
     icon: Users,
     path: "/admin/gestores",
-    color: "text-warning",
-    bgColor: "bg-warning/10"
+    color: "text-primary",
+    bgColor: "bg-primary/10"
   }, {
     title: "Dashboard PQRS",
     description: "Visualiza métricas y estadísticas de gestión de PQRS",
@@ -46,7 +39,7 @@ const AdminDashboard = () => {
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 md:grid-cols-1 lg:grid-cols-2">
           {cards.map(card => {
           const Icon = card.icon;
           return <MedicalCard key={card.path} variant="interactive" className="cursor-pointer hover:shadow-lg transition-all duration-300" onClick={() => navigate(card.path)} tabIndex={0} role="button" aria-label={`Ir a ${card.title}`} onKeyDown={e => {

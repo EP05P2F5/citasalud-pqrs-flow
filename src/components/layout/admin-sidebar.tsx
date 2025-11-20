@@ -1,7 +1,7 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Home, FileText, Bell, BarChart3, User, Users, Settings, MessageSquare, Info, X } from "lucide-react";
+import { Home, BarChart3, User, Users, Info, X } from "lucide-react";
 import { MedicalButton } from "../ui/medical-button";
 interface AdminSidebarProps {
   isOpen: boolean;
@@ -24,11 +24,6 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
     href: "/admin/dashboard",
     icon: Home,
     label: "Inicio",
-    isActive: true
-  }, {
-    href: "/admin/manage-pqrs",
-    icon: FileText,
-    label: "PQRS",
     isActive: true
   }, {
     href: "/admin/gestores",

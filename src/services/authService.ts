@@ -13,19 +13,18 @@ export interface LoginResponse {
 
 const API_URL = "https://citasalud-feature5-h6aqfke8h8c2c3ha.canadacentral-01.azurewebsites.net";
 
-// ✅ Credenciales de prueba simuladas para desarrollo
 const MOCK_USERS = {
   admin: {
     nickname: "admin",
     password: "admin123",
-    rol: "Administrador",
+    rol: "ADMIN",
     email: "admin@citasalud.com",
     username: "Administrador CITASalud"
   },
   gestor: {
     nickname: "gestor",
     password: "gestor123",
-    rol: "Gestor",
+    rol: "GESTOR",
     email: "gestor@citasalud.com",
     username: "Gestor PQRS"
   },
