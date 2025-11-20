@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Activity, Eye, EyeOff, User as UserIcon, Lock } from 'lucide-react';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { login } from "@/services/authService"; // 👈 importa el servicio
+import { login } from "@/services/authService";
 
 const AdminLogin = () => {
   const navigate = useNavigate();
@@ -97,10 +97,9 @@ const AdminLogin = () => {
                     if (error) setError('');
                   }}
                   placeholder="Ingrese su usuario"
-                  className="w-full pl-10"
-                  aria-required="true"
-                  aria-invalid={error ? "true" : "false"}
-                  aria-describedby={error ? "error-message" : undefined}
+                  className="pl-10"
+                  disabled={loading}
+                  required
                 />
               </div>
             </div>
@@ -120,16 +119,16 @@ const AdminLogin = () => {
                     if (error) setError('');
                   }}
                   placeholder="Ingrese su contraseña"
-                  className="w-full pl-10 pr-10"
-                  aria-required="true"
-                  aria-invalid={error ? "true" : "false"}
-                  aria-describedby={error ? "error-message" : undefined}
+                  className="pl-10 pr-10"
+                  disabled={loading}
+                  required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                  disabled={loading}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -137,53 +136,63 @@ const AdminLogin = () => {
             </div>
 
             {error && (
-              <Alert variant="destructive" id="error-message" role="alert">
+              <Alert variant="destructive">
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
 
             <MedicalButton
               type="submit"
-              variant="medical"
-              size="lg"
               className="w-full"
               disabled={loading}
             >
-              {loading ? "Iniciando sesión..." : "Iniciar Sesión Administrativa"}
+              {loading ? "Ingresando..." : "Ingresar"}
             </MedicalButton>
+          </form>
 
-            {/* Información de prueba */}
-            <div className="mt-4 p-3 bg-accent/30 rounded-lg">
-              <p className="text-xs font-medium text-accent-foreground mb-1">
-                Credenciales de prueba:
+          {/* Credenciales de prueba */}
+          <div className="mt-6 p-4 bg-muted/50 rounded-lg">
+            <p className="text-xs font-semibold text-muted-foreground mb-2">
+              Credenciales de prueba:
+            </p>
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground">
+                Usuario: <span className="font-mono font-semibold text-foreground">admin</span>
               </p>
               <p className="text-xs text-muted-foreground">
-                Usuario: <span className="font-mono">admin</span> | 
-                Contraseña: <span className="font-mono">admin123</span>
+                Contraseña: <span className="font-mono font-semibold text-foreground">admin123</span>
               </p>
             </div>
-          </form>
-        </div>
+          </div>
 
-        {/* Footer */}
-        <div className="text-center mt-6 space-y-2">
-          <button
-            type="button"
-            onClick={() => navigate('/patient-login')}
-            className="text-sm text-muted-foreground hover:text-primary transition-colors"
-          >
-            ¿Eres paciente? Ingresa aquí
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate('/gestor-login')}
-            className="text-sm text-muted-foreground hover:text-primary transition-colors block w-full"
-          >
-            ¿Eres gestor? Ingresa aquí
-          </button>
-          <p className="text-xs text-muted-foreground">
-            © 2024 CITASalud. Sistema seguro de PQRS médicas.
-          </p>
+          {/* Enlaces de navegación */}
+          <div className="mt-6 space-y-2 text-center text-sm">
+            <p className="text-muted-foreground">
+              ¿Eres paciente?{' '}
+              <button 
+                type="button"
+                onClick={() => navigate('/patient-login')}
+                className="text-primary hover:text-primary/80 font-medium transition-colors"
+              >
+                Ingresa aquí
+              </button>
+            </p>
+            <p className="text-muted-foreground">
+              ¿Eres gestor?{' '}
+              <button 
+                type="button"
+                onClick={() => navigate('/gestor-login')}
+                className="text-primary hover:text-primary/80 font-medium transition-colors"
+              >
+                Ingresa aquí
+              </button>
+            </p>
+          </div>
+
+          {/* Footer */}
+          <div className="mt-8 text-center text-xs text-muted-foreground">
+            <p>© 2025 CITASalud. Sistema de Gestión PQRS</p>
+          </div>
         </div>
       </div>
     </div>
