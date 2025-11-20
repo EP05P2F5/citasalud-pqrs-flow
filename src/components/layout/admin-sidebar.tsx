@@ -88,7 +88,9 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
               <p className="text-xs text-muted-foreground">
                 CITASalud Admin v1.0
               </p>
-              <p className="text-xs text-muted-foreground mt-1 mx-0 text-center">Sistema admin                      </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Sistema administrativo                              
+              </p>
             </div>
           </div>
         </div>
