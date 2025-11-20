@@ -237,6 +237,13 @@ const Login: React.FC = () => {
           >
             ¿Eres administrador? Ingresa aquí
           </button>
+          <button
+            type="button"
+            onClick={() => navigate("/gestor-login")}
+            className="text-sm text-muted-foreground hover:text-primary transition-colors block w-full"
+          >
+            ¿Eres gestor? Ingresa aquí
+          </button>
           <p className="text-xs text-muted-foreground">
             © 2024 CITASalud. Sistema seguro de PQRS médicas.
           </p>

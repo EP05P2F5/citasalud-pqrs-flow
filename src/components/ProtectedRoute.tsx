@@ -12,8 +12,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ requiredRole, children 
 
   if (!token) {
     // Sin token → redirigir según el rol requerido
-    if (requiredRole === "Administrador") {
+    if (requiredRole === "ADMIN") {
       return <Navigate to="/admin-login" replace />;
+    }
+    if (requiredRole === "GESTOR") {
+      return <Navigate to="/gestor-login" replace />;
     }
     return <Navigate to="/patient-login" replace />;
   }

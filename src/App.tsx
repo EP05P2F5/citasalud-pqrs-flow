@@ -22,6 +22,9 @@ import AdminPQRSDetail from "./pages/AdminPQRSDetail";
 import AdminManageGestores from "./pages/AdminManageGestores";
 import AdminCreateGestor from "./pages/AdminCreateGestor";
 import AdminEditGestor from "./pages/AdminEditGestor";
+import GestorLogin from "./pages/GestorLogin";
+import GestorDashboard from "./pages/GestorDashboard";
+import GestorManagePQRS from "./pages/GestorManagePQRS";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Unauthorized from "./pages/Unauthorized";
 
@@ -65,6 +68,10 @@ const App = () => (
             {/* Login administrativo */}
             <Route path="/admin-login" element={<AdminLogin />} />
             <Route path="/admin/login" element={<AdminLogin />} />
+
+            {/* Login gestor */}
+            <Route path="/gestor-login" element={<GestorLogin />} />
+            <Route path="/gestor/login" element={<GestorLogin />} />
 
             {/* ✅ Rutas protegidas para rol Administrador */}
             <Route
@@ -144,6 +151,24 @@ const App = () => (
               element={
                 <ProtectedRoute requiredRole="ADMIN">
                   <AdminEditGestor />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* ✅ Rutas protegidas para rol Gestor */}
+            <Route
+              path="/gestor"
+              element={
+                <ProtectedRoute requiredRole="GESTOR">
+                  <GestorDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/gestor/manage-pqrs"
+              element={
+                <ProtectedRoute requiredRole="GESTOR">
+                  <GestorManagePQRS />
                 </ProtectedRoute>
               }
             />
