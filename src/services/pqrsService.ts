@@ -76,7 +76,7 @@ export const getUsuarioByUsername = async (
     if (!token) throw new Error("Token no disponible.");
 
     const response = await fetch(
-      `${API_URL}/usuarios/${encodeURIComponent(username)}`,
+      `${API_URL}/usuarios/nickname/${encodeURIComponent(username)}`,
       {
         method: "GET",
         headers: {
@@ -167,6 +167,98 @@ export const getPQRSByUser = async (usuarioId: number): Promise<PQRSItem[]> => {
   } catch (error: any) {
     console.error("Error en getPQRSByUser:", error);
     throw new Error(error.message || "Error al obtener PQRS.");
+  }
+};
+
+
+// 🔹 Obtener todas las PQRS (para el GESTOR)
+export const getAllPQRS = async (): Promise<PQRSItem[]> => {
+  try {
+    const token = getAuthToken();
+    if (!token) throw new Error("Token no disponible.");
+
+    const response = await fetch(`${API_URL}/pqrs`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      }
+    });
+
+    if (!response.ok) throw new Error("Error al obtener todas las PQRS");
+
+    const data = await response.json();
+
+    return data.map((item: any) => ({
+      idPqrs: item.idPqrs,
+      idUsuario: item.idUsuario,
+      descripcion: item.descripcion,
+      fechaDeGeneracion: item.fechaDeGeneracion,
+      radicado: item.radicado,
+      tipo: item.tipo,
+      estado: item.estado,
+      fechaDeRespuesta: item.fechaDeRespuesta,
+      respuesta: item.respuesta,
+      idTipo: item.tipo?.idTipo ?? item.idTipo,
+      idEstado: item.estado?.idEstado ?? item.idEstado,
+    }));
+  } catch (error: any) {
+    console.error("Error en getAllPQRS:", error);
+    throw new Error(error.message);
+  }
+};
+
+
+// 🔥 PUT CORREGIDO: ahora envía EXACTAMENTE lo que espera el backend
+export const updatePQRS = async (
+  id: number,
+  pqrs: PQRSItem
+): Promise<void> => {
+  try {
+    const token = getAuthToken();
+    if (!token) throw new Error("Token no disponible.");
+
+    const body = {
+      idPqrs: pqrs.idPqrs,
+      idUsuario: pqrs.idUsuario,
+
+      tipo: {
+        idTipo: pqrs.tipo.idTipo,
+        descripcion: pqrs.tipo.descripcion,
+      },
+
+      descripcion: pqrs.descripcion,
+      fechaDeGeneracion: pqrs.fechaDeGeneracion,
+      radicado: pqrs.radicado,
+
+      estado: {
+        idEstado: pqrs.estado.idEstado,
+        descripcion: pqrs.estado.descripcion,
+      },
+
+      fechaDeRespuesta: pqrs.fechaDeRespuesta,
+      respuesta: pqrs.respuesta,
+
+      idTipo: pqrs.tipo.idTipo,
+      idEstado: pqrs.estado.idEstado,
+    };
+
+    const response = await fetch(`${API_URL}/pqrs/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+      throw new Error(text || "No se pudo actualizar la PQRS");
+    }
+  } catch (error: any) {
+    console.error("Error en updatePQRS:", error);
+    throw new Error(error.message);
   }
 };
 

@@ -137,6 +137,8 @@ const CreatePQRS: React.FC = () => {
     { id: 5, label: "Felicitación" },
   ];
 
+  
+
   return (
     <MedicalLayout
       sidebarOpen={sidebarOpen}
