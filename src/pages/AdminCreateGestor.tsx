@@ -4,73 +4,55 @@ import { AdminLayout } from "@/components/layout/admin-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { createGestor } from "@/services/usuariosService";
 
 const AdminCreateGestor: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
   const [formData, setFormData] = useState({
     nombre: "",
-    tipoIdentificacion: "Cédula de Ciudadanía",
-    numeroDocumento: "",
-    correo: "",
-    estado: "Activo",
-    contrasena: "",
+    apellido: "",
+    fechaDeNacimiento: "",
+    direccion: "",
+    telefono: "",
+    nickname: "",
+    password: "",
+    email: "",
   });
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.nombre || !formData.numeroDocumento || !formData.correo || !formData.contrasena) {
+    try {
+      const body = {
+        ...formData,
+        rol: { idRol: 2 }, // 🔥 rol gestor por defecto
+      };
+
+      const created = await createGestor(body);
+
       toast({
-        title: "Error",
-        description: "Por favor complete todos los campos requeridos.",
+        title: "Gestor creado",
+        description: `El gestor ${created.nombre} fue registrado exitosamente.`,
+      });
+
+      navigate("/admin/gestores");
+    } catch (error: any) {
+      toast({
+        title: "Error al crear gestor",
+        description: error.message || "No se pudo completar la acción.",
         variant: "destructive",
       });
-      return;
     }
-
-    // Obtener gestores del localStorage
-    const stored = localStorage.getItem('gestores');
-    const gestores = stored ? JSON.parse(stored) : [];
-    
-    // Crear nuevo gestor
-    const newGestor = {
-      id: gestores.length > 0 ? Math.max(...gestores.map((g: any) => g.id)) + 1 : 1,
-      nombre: formData.nombre,
-      tipoIdentificacion: formData.tipoIdentificacion,
-      numeroDocumento: formData.numeroDocumento,
-      correo: formData.correo,
-      estado: formData.estado,
-      fechaRegistro: new Date().toISOString().split("T")[0],
-    };
-    
-    // Agregar y guardar
-    gestores.push(newGestor);
-    localStorage.setItem('gestores', JSON.stringify(gestores));
-    
-    toast({
-      title: "Gestor registrado",
-      description: `El gestor ${formData.nombre} ha sido registrado exitosamente.`,
-    });
-
-    setTimeout(() => {
-      navigate("/admin/gestores");
-    }, 1000);
   };
 
   return (
@@ -80,130 +62,136 @@ const AdminCreateGestor: React.FC = () => {
       onSidebarToggle={() => setSidebarOpen(!sidebarOpen)}
     >
       <div className="space-y-6 max-w-3xl">
+        
+        {/* Encabezado */}
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate("/admin/gestores")}
-            aria-label="Volver a gestores"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-3xl font-bold text-foreground">
-              Registrar Gestor PQRS
-            </h1>
+            <h1 className="text-3xl font-bold">Registrar Gestor PQRS</h1>
             <p className="text-muted-foreground mt-2">
-              Complete el formulario para registrar un nuevo gestor
+              Complete el formulario
             </p>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-card rounded-lg shadow border border-border p-6 space-y-6">
+        {/* Formulario */}
+        <form onSubmit={handleSubmit} className="bg-card rounded-lg shadow border p-6 space-y-6">
+
           <div className="space-y-4">
+
+            {/* Nombre */}
             <div>
-              <Label htmlFor="nombre">Nombre Completo *</Label>
+              <Label>Nombre *</Label>
               <Input
-                id="nombre"
                 value={formData.nombre}
                 onChange={(e) => handleChange("nombre", e.target.value)}
-                placeholder="Ej: Carlos Andrés Gómez"
                 required
               />
             </div>
 
+            {/* Apellido */}
             <div>
-              <Label htmlFor="tipoIdentificacion">Tipo de Identificación *</Label>
-              <Select
-                value={formData.tipoIdentificacion}
-                onValueChange={(value) => handleChange("tipoIdentificacion", value)}
-              >
-                <SelectTrigger id="tipoIdentificacion">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Cédula de Ciudadanía">Cédula de Ciudadanía</SelectItem>
-                  <SelectItem value="Cédula de Extranjería">Cédula de Extranjería</SelectItem>
-                  <SelectItem value="Pasaporte">Pasaporte</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="numeroDocumento">Número de Documento *</Label>
+              <Label>Apellido *</Label>
               <Input
-                id="numeroDocumento"
-                value={formData.numeroDocumento}
-                onChange={(e) => handleChange("numeroDocumento", e.target.value)}
-                placeholder="Ej: 1023456789"
+                value={formData.apellido}
+                onChange={(e) => handleChange("apellido", e.target.value)}
                 required
               />
             </div>
 
+            {/* Fecha nacimiento */}
             <div>
-              <Label htmlFor="correo">Correo Electrónico *</Label>
+              <Label>Fecha de Nacimiento *</Label>
               <Input
-                id="correo"
+                type="date"
+                value={formData.fechaDeNacimiento}
+                onChange={(e) => handleChange("fechaDeNacimiento", e.target.value)}
+                required
+              />
+            </div>
+
+            {/* Dirección */}
+            <div>
+              <Label>Dirección *</Label>
+              <Input
+                value={formData.direccion}
+                onChange={(e) => handleChange("direccion", e.target.value)}
+                required
+              />
+            </div>
+
+            {/* Teléfono */}
+            <div>
+              <Label>Teléfono *</Label>
+              <Input
+                value={formData.telefono}
+                onChange={(e) => handleChange("telefono", e.target.value)}
+                required
+              />
+            </div>
+
+            {/* Nickname */}
+            <div>
+              <Label>Nickname *</Label>
+              <Input
+                value={formData.nickname}
+                onChange={(e) => handleChange("nickname", e.target.value)}
+                required
+              />
+            </div>
+
+            {/* Email */}
+            <div>
+              <Label>Email *</Label>
+              <Input
                 type="email"
-                value={formData.correo}
-                onChange={(e) => handleChange("correo", e.target.value)}
-                placeholder="Ej: gestor@citasalud.com"
+                value={formData.email}
+                onChange={(e) => handleChange("email", e.target.value)}
                 required
               />
             </div>
 
+            {/* Password */}
             <div>
-              <Label htmlFor="contrasena">Contraseña *</Label>
+              <Label>Contraseña *</Label>
               <div className="relative">
                 <Input
-                  id="contrasena"
                   type={showPassword ? "text" : "password"}
-                  value={formData.contrasena}
-                  onChange={(e) => handleChange("contrasena", e.target.value)}
-                  placeholder="Ingrese una contraseña segura"
+                  value={formData.password}
+                  onChange={(e) => handleChange("password", e.target.value)}
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                  className="absolute right-3 top-1/2 -translate-y-1/2"
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  {showPassword ? <EyeOff /> : <Eye />}
                 </button>
               </div>
             </div>
 
-            <div>
-              <Label htmlFor="estado">Estado *</Label>
-              <Select
-                value={formData.estado}
-                onValueChange={(value) => handleChange("estado", value)}
-              >
-                <SelectTrigger id="estado">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Activo">Activo</SelectItem>
-                  <SelectItem value="Inactivo">Inactivo</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
           </div>
 
-          <div className="flex gap-4 pt-4">
-            <Button type="submit" className="flex-1">
-              Registrar Gestor
-            </Button>
+          {/* Botones */}
+          <div className="flex gap-4">
+            <Button type="submit" className="flex-1">Registrar Gestor</Button>
             <Button
               type="button"
               variant="outline"
-              onClick={() => navigate("/admin/gestores")}
               className="flex-1"
+              onClick={() => navigate("/admin/gestores")}
             >
               Cancelar
             </Button>
           </div>
+
         </form>
       </div>
     </AdminLayout>
